@@ -1,5 +1,5 @@
 variable "cluster_version" {
-  description = "Cluster version" 
+  description = "Cluster version"
   default     = 1.22
 }
 
@@ -11,3 +11,6 @@ variable "cluster_suffix" {
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
+variable "user_list" {
+  description = "List of users who will be using the cluster."
+}

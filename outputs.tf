@@ -32,3 +32,8 @@ output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = local.cluster_name
 }
+
+output "k8s_namespaces" {
+  description = "List of namespaces created in the new cluster."
+  value       = concat(kubernetes_namespace.user_main.*.name, kubernetes_namespace.user_alt.*.name)
+}

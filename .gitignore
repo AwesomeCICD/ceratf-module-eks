@@ -1,3 +1,4 @@
+testing.tf
 testing.auto.tfvars
 .terraform*
 terraform.tfstate*

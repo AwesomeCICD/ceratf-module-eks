@@ -35,62 +35,52 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "17.24.0"
+  version         = "18.30.2"
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
-  subnets         = module.vpc.private_subnets
+  subnet_ids      = module.vpc.private_subnets
 
   vpc_id = module.vpc.vpc_id
 
-  workers_group_defaults = {
-    root_volume_type = "gp2"
+  eks_managed_node_group_defaults = {
+    root_volume_type                     = "gp2"
+    instance_type                        = "m5.large"
+    additional_userdata                  = "echo foo bar"
+    asg_desired_capacity                 = 2
+    metadata_http_put_response_hop_limit = 2 #enable IMDSv2
+    tags = {
+      owner = "solutions@circleci.com"
+      team  = "Solutions Engineering"
+    }
+
   }
 
-  worker_groups = [
+  eks_managed_node_groups = [
     {
-      name                                 = "worker-group-1"
-      instance_type                        = "m5.large"
-      additional_userdata                  = "echo foo bar"
-      additional_security_group_ids        = [aws_security_group.worker_group_mgmt_one.id]
-      asg_desired_capacity                 = 2
-      metadata_http_put_response_hop_limit = 2 #enable IMDSv2
-      tags = [
-        {
-          key                 = "owner"
-          value               = "solutions@circleci.com"
-          propagate_at_launch = true
-        },
-        {
-          key                 = "team"
-          value               = "Solutions Engineering"
-          propagate_at_launch = true
-        }
-      ]
+      name                            = "${local.cluster_name}-ng-1"
+      launch_template_name            = "${local.cluster_name}-ng-1"
+      additional_security_group_ids   = [aws_security_group.worker_group_mgmt_one.id]
+      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
     },
     {
-      name                                 = "worker-group-2"
-      instance_type                        = "m5.large"
-      additional_userdata                  = "echo foo bar"
-      additional_security_group_ids        = [aws_security_group.worker_group_mgmt_two.id]
-      asg_desired_capacity                 = 2
-      metadata_http_put_response_hop_limit = 2 #enable IMDSv2
-      tags = [
-        {
-          key                 = "owner"
-          value               = "solutions@circleci.com"
-          propagate_at_launch = true
-        },
-        {
-          key                 = "team"
-          value               = "Solutions Engineering"
-          propagate_at_launch = true
-        }
-      ]
-
-    },
+      name                            = "${local.cluster_name}-ng-2"
+      launch_template_name            = "${local.cluster_name}-ng-2"
+      additional_security_group_ids   = [aws_security_group.worker_group_mgmt_two.id]
+      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
+    }
   ]
 }
 
+resource "null_resource" "kubeconfig" {
+
+  triggers = {
+    cluster_id = module.eks.cluster_id
+  }
+
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name ${module.eks.cluster_id} --kubeconfig '${path.cwd}/${module.eks.cluster_id}_kubeconfig' --profile ${var.aws_profile} --region ${data.aws_region.current.name}"
+  }
+}
 
 
 resource "random_string" "suffix" {

@@ -25,7 +25,7 @@ output "config_map_aws_auth" {
 
 output "region" {
   description = "AWS region"
-  value       = var.region
+  value       = data.aws_region.current.name
 }
 
 output "cluster_name" {
@@ -35,5 +35,9 @@ output "cluster_name" {
 
 output "k8s_namespaces" {
   description = "List of namespaces created in the new cluster."
-  value       = concat(kubernetes_namespace.user_main.*.name, kubernetes_namespace.user_alt.*.name)
+  value = concat(
+    kubernetes_namespace.user_main[*]
+    #kubernetes_namespace.user_main.*.metadata[*][0].name,
+    #kubernetes_namespace.user_alt.*.metadata[*][0].name
+  )
 }

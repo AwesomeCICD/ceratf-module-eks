@@ -9,6 +9,12 @@ variable "cluster_suffix" {
 
 variable "user_list" {
   description = "List of users who will be using the cluster."
+  default     = []
+}
+
+variable "aws_profile" {
+  description = "AWS profile used for generating kubeconfig."
+  default     = "default"
 }
 
 variable "region_short_name_table" {

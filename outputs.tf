@@ -27,6 +27,6 @@ output "k8s_namespaces" {
   description = "List of namespaces created in the new cluster."
   value = concat(
     [for ns in kubernetes_namespace.user_main : ns.metadata[0].name],
-    [for ns in kubernetes_namespace.user_alt  : ns.metadata[0].name]
+    [for ns in kubernetes_namespace.user_alt : ns.metadata[0].name]
   )
 }

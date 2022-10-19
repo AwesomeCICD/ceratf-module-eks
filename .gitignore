@@ -3,3 +3,4 @@ testing.auto.tfvars
 .terraform*
 terraform.tfstate*
 *_kubeconfig
+secrets/

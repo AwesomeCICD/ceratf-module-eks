@@ -14,8 +14,11 @@ resource "kubernetes_namespace" "user_alt" {
   }
 }
 
+# It looks like you must use IAM auth to access the k8s cluster; you can't just use regular k8s users.  
+# Since these are sandbox cluster, we could just use the cluster creator kubeconfig file that gets generated.
+# Leaving this stuff here but commented out in case we want to revisit it.
 
-
+/*
 
 #Source: https://github.com/rhythmictech/terraform-kubernetes-x509-auth-manager/blob/master/main.tf
 
@@ -83,3 +86,24 @@ resource "kubernetes_secret" "user_cert" {
   }
   type = "kubernetes.io/tls"
 }
+
+# Create kubeconfig files
+
+resource "local_file" "user_kubeconfig" {
+  for_each = toset(var.user_list)
+  
+  filename = "${path.cwd}/secrets/kubeconfigs/${each.key}_kubeconfig.yaml"
+  content = templatefile(
+    "${path.module}/templates/kubeconfig.yaml.tpl", {
+      # CA, CRT, and KEY data need to be base64
+      #  but are already encoded
+      CA_DATA         = data.aws_eks_cluster.cluster.certificate_authority.0.data
+      API_SERVER      = module.eks.cluster_endpoint,
+      CLUSTER_NAME    = module.eks.cluster_arn,
+      #namespace       = var.namespace,
+      username        = "${each.key}",
+      CLIENT_CRT_DATA = base64encode(kubernetes_certificate_signing_request_v1.user_csr["${each.key}"].certificate),
+      CLIENT_KEY_DATA = base64encode(tls_private_key.user_key["${each.key}"].private_key_pem)
+  })
+}
+*/

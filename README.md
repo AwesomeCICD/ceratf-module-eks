@@ -4,6 +4,7 @@ Terraform module for deploying regional SE EKS clusters.  Uses a list of names t
 ## Requirements
 
 - Terraform >= 1.0.9
+- aws-cli >= 2.8.3
 
 ## How to Use
 
@@ -14,25 +15,40 @@ Terraform module for deploying regional SE EKS clusters.  Uses a list of names t
 
 ## Terraform Variables
 
+#### Required
 
 | Name | Default | Description|
 |------|---------|------------|
-|TBD|TBD|TBD|
 |cluster_suffix| none | EKS name suffix.  Appeneded to "cera-"|
+
+
+#### Optional
+
+| Name | Default | Description|
+|------|---------|------------|
 |aws_profile| `default` | AWS profile used for generating kubeconfig. |
-|cluster_version | `1.22` | Desired EKS cluster version.|
 |user_list| none | List of users for whom k8s namespaces will be created.|
+|cluster_version | `1.22` | Desired EKS cluster version.|
+|node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
+|nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
 
 
 ### Example usage
 
-```js
+```hcl
 module "se_eks_cluster" {
-  source          = "../"
-  cluster_version = var.cluster_version
-  cluster_suffix  = var.cluster_suffix
-  user_list       = var.user_list
-  aws_profile     = var.aws_profile
+  source = "" #Add private git repo URL here
+
+  # Required
+  cluster_suffix = "arrakis"
+  user_list      = ["alia", "bijaz", "cheni", "duncan"]
+  aws_profile    = "arakeen-dev"
+
+  # Optional
+  cluster_version            = "1.22"
+  node_instance_type         = "m5.large"
+  nodegroup_desired_capacity = "2"
+  
 }
 ```
 

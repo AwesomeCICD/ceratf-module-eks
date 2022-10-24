@@ -1,0 +1,46 @@
+version: 2.1
+orbs:
+  terraform: circleci/terraform@1.1.1
+  jinja: jtreutel/jinja@1.1.0
+  aws-cli: circleci/aws-cli@3.1.3
+
+
+jobs:
+  setup-test-environment:
+    parameters:
+      aws_profile: 
+        type: env_var_name
+        default: J2_AWS_PROFILE
+    executor: jinja/default
+    steps:
+      - checkout
+      - aws-cli/setup:
+          profile-name: << parameters.aws_profile >> 
+      - jinja/render:
+          path: .test/
+          outputdir: ./
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  tf-validate:
+    executor: terraform/default
+    steps:
+      - attach_workspace:
+          at: .
+      - terraform/fmt
+      - terraform/validate
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - setup-test-environment:
+          context: 
+            - tf-testing
+            - tf-module-testing
+      - tf-validate:
+          context: tf-testing
+          requires: 
+            - setup-test-environment

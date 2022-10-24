@@ -17,6 +17,16 @@ variable "aws_profile" {
   default     = "default"
 }
 
+variable "node_instance_type" {
+  description = "Instance type that will be used in nodegroups."
+  default     = "m5.large"
+}
+
+variable "nodegroup_desired_capacity" {
+  description = "Desired capacity of each nodegroup."
+  default     = 2
+}
+
 variable "region_short_name_table" {
   description = "Region short name mappings. Current as of 2022-10-17."
   default = {

@@ -44,9 +44,9 @@ module "eks" {
 
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
-    instance_type                        = "m5.large"
+    instance_type                        = var.node_instance_type
     additional_userdata                  = "echo foo bar"
-    asg_desired_capacity                 = 2
+    asg_desired_capacity                 = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
     tags = {
       owner = "solutions@circleci.com"

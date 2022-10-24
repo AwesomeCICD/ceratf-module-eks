@@ -24,7 +24,7 @@ variable "node_instance_type" {
 
 variable "nodegroup_desired_capacity" {
   description = "Desired capacity of each nodegroup."
-  default     = "m5.large"
+  default     = 2
 }
 
 variable "region_short_name_table" {

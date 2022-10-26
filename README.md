@@ -1,5 +1,5 @@
 # se-eks-cluster-tf-module
-Terraform module for deploying regional SE EKS clusters.  Uses a list of names to create two namespaces per name, `main-NAME` and `alt-NAME`.  Writes a cluster creater kubeconfig file locally for accessing the cluster.
+Terraform module for deploying regional SE EKS clusters.  Uses a list of names to create two namespaces per name, `main-NAME` and `alt-NAME`.  Edits the aws-auth config map to grant `system:masters` access to a specified IAM role.
 
 ## Requirements
 
@@ -31,7 +31,7 @@ Terraform module for deploying regional SE EKS clusters.  Uses a list of names t
 |cluster_version | `1.22` | Desired EKS cluster version.|
 |node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
 |nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
-
+|cluster_access_iam_role_name|`""`|IAM role to which cluster admin access will be granted.|
 
 ### Example usage
 
@@ -39,15 +39,14 @@ Terraform module for deploying regional SE EKS clusters.  Uses a list of names t
 module "se_eks_cluster" {
   source = "" #Add private git repo URL here
 
-  # Required
-  cluster_suffix = "arrakis"
-  user_list      = ["alia", "bijaz", "cheni", "duncan"]
-  aws_profile    = "arakeen-dev"
+  cluster_suffix               = "arrakis"
+  user_list                    = ["alia", "bijaz", "cheni", "duncan"]
+  aws_profile                  = "arakeen-dev"
+  cluster_access_iam_role_name = "AtreidesAdmins_b77a0890a53809d8"
+  cluster_version              = "1.22"
+  node_instance_type           = "m5.large"
+  nodegroup_desired_capacity   = "2"
 
-  # Optional
-  cluster_version            = "1.22"
-  node_instance_type         = "m5.large"
-  nodegroup_desired_capacity = "2"
   
 }
 ```
@@ -55,22 +54,26 @@ module "se_eks_cluster" {
 
 ## Resources Created by Terraform
 
-For a user_list `["alice", "bob", "charlie"]`:
+For a user_list `["alia", "bijaz", "cheni", "duncan"]`:
 
 - data.aws_availability_zones.available
+- data.aws_caller_identity.current
 - data.aws_eks_cluster.cluster
 - data.aws_eks_cluster_auth.cluster
+- data.aws_iam_role.cluster_access
 - data.aws_region.current
 - aws_security_group.all_worker_mgmt
 - aws_security_group.worker_group_mgmt_one
 - aws_security_group.worker_group_mgmt_two
-- kubernetes_namespace.user_alt["alice"]
-- kubernetes_namespace.user_alt["bob"]
-- kubernetes_namespace.user_alt["charlie"]
-- kubernetes_namespace.user_main["alice"]
-- kubernetes_namespace.user_main["bob"]
-- kubernetes_namespace.user_main["charlie"]
-- null_resource.kubeconfig
+- kubernetes_namespace.user_alt["alia"]
+- kubernetes_namespace.user_alt["bijaz"]
+- kubernetes_namespace.user_alt["cheni"]
+- kubernetes_namespace.user_alt["duncan"]
+- kubernetes_namespace.user_main["alia"]
+- kubernetes_namespace.user_main["bijaz"]
+- kubernetes_namespace.user_main["cheni"]
+- kubernetes_namespace.user_main["duncan"]
+- null_resource.cluster_creator_kubeconfig
 - random_string.suffix
 - module.eks.data.aws_caller_identity.current
 - module.eks.data.aws_default_tags.current
@@ -98,6 +101,7 @@ For a user_list `["alice", "bob", "charlie"]`:
 - module.eks.aws_security_group_rule.node["ingress_cluster_kubelet"]
 - module.eks.aws_security_group_rule.node["ingress_self_coredns_tcp"]
 - module.eks.aws_security_group_rule.node["ingress_self_coredns_udp"]
+- module.eks.kubernetes_config_map_v1_data.aws_auth[0]
 - module.vpc.aws_eip.nat[0]
 - module.vpc.aws_internet_gateway.this[0]
 - module.vpc.aws_nat_gateway.this[0]

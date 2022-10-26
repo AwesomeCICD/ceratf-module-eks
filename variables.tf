@@ -27,6 +27,11 @@ variable "nodegroup_desired_capacity" {
   default     = 2
 }
 
+variable "cluster_access_iam_role_name" {
+  description = "IAM role that will be granted EKS cluster admin access."
+  default     = ""
+}
+
 variable "region_short_name_table" {
   description = "Region short name mappings. Current as of 2022-10-17."
   default = {

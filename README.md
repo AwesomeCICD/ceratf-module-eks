@@ -51,6 +51,14 @@ module "se_eks_cluster" {
 }
 ```
 
+There is also an optional output that will print a command to update a user's kubeconfig file:
+
+```hcl
+output "kubeconfig_update_command" {
+  value = module.se_eks_cluster.kubeconfig_update_command
+}
+```
+
 
 ## Resources Created by Terraform
 

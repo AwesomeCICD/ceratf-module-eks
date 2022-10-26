@@ -35,3 +35,18 @@ output "k8s_namespaces" {
     [for ns in kubernetes_namespace.user_alt : ns.metadata[0].name]
   )
 }
+
+output "kubeconfig_update_command" {
+  value = <<EOF
+  To update your kubeconfig file, sign in to AWS SSO via CLI and then run the following commands:
+      
+      aws eks update-kubeconfig --name ${local.cluster_name} --region ${data.aws_region.current.name}
+      kubectl config rename-context ${module.eks.cluster_arn} ${local.cluster_name}
+      kubectl config set-context ${local.cluster_name}
+  
+  To verify access to the cluster, try to list the namespaces:
+      
+      kubectl get namespaces
+
+EOF
+}

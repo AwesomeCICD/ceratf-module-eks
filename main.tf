@@ -73,7 +73,7 @@ module "eks" {
   ]
 }
 
-resource "null_resource" "kubeconfig" {
+resource "null_resource" "cluster_creator_kubeconfig" {
 
   triggers = {
     #  cluster_id = module.eks.cluster_id

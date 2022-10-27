@@ -34,11 +34,11 @@ module "vpc" {
 
 
 module "eks" {
-  source                    = "terraform-aws-modules/eks/aws"
-  version                   = "18.30.2"
-  cluster_name              = local.cluster_name
-  cluster_version           = var.cluster_version
-  subnet_ids                = module.vpc.private_subnets
+  source          = "terraform-aws-modules/eks/aws"
+  version         = "18.30.2"
+  cluster_name    = local.cluster_name
+  cluster_version = var.cluster_version
+  subnet_ids      = module.vpc.private_subnets
   vpc_id                    = module.vpc.vpc_id
   aws_auth_roles            = var.cluster_access_iam_role_name != "" ? local.aws_auth_roles : []
   manage_aws_auth_configmap = true
@@ -73,11 +73,10 @@ module "eks" {
   ]
 }
 
-resource "null_resource" "cluster_creator_kubeconfig" {
+resource "null_resource" "kubeconfig" {
 
   triggers = {
-    #  cluster_id = module.eks.cluster_id
-    always_run = "${timestamp()}" #makes it run on every apply
+    cluster_id = module.eks.cluster_id
   }
 
   provisioner "local-exec" {

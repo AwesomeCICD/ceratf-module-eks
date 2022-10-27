@@ -32,6 +32,18 @@ variable "cluster_access_iam_role_name" {
   default     = ""
 }
 
+
+variable "circleci_org_id" {
+  description = "IDs of CircleCI organizations to be granted access to EKS cluster."
+  default     = ""
+}
+
+variable "circleci_org_friendly_name" {
+  description = "Human readable name representing the CircleCI org, e.g. awesomecicd"
+  default = ""
+}
+
+
 variable "region_short_name_table" {
   description = "Region short name mappings. Current as of 2022-10-17."
   default = {

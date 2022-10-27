@@ -50,3 +50,7 @@ output "kubeconfig_update_command" {
 
 EOF
 }
+
+output "circleci_oidc_iam_role_arn" {
+  value = aws_iam_role.circleci_access.arn
+}

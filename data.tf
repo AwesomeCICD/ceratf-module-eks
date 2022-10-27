@@ -19,6 +19,9 @@ locals {
    */
   cluster_name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${format("%.32s", var.cluster_suffix)}"
 
+  circleci_org_friendly_name = var.circleci_org_friendly_name != "" ? "${var.circleci_org_friendly_name}-oidc-access" : "${substr(var.circleci_org_id, 0, 7)}-oidc-access"
+
+
   # Currently just maps an SSO role to a group with system:masters permission
   aws_auth_roles = [
     {
@@ -27,6 +30,13 @@ locals {
       ],
       "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.id}:role/${data.aws_iam_role.cluster_access.name}", # We have to strip the path since IAM role paths aren't supported.  See https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting_iam.html#security-iam-troubleshoot-ConfigMap
       "username" : "aws-sso-user"
+    },
+    {
+      "groups" : [
+        "system:masters"
+      ],
+      "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.id}:role/${aws_iam_role.circleci_access.name}", # We have to strip the path since IAM role paths aren't supported.  See https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting_iam.html#security-iam-troubleshoot-ConfigMap
+      "username" : "circleci-oidc-user"
     }
   ]
 }

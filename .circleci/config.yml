@@ -6,16 +6,20 @@ orbs:
 
 
 jobs:
-  setup-test-environment:
+  setup-oidc-and-test-files:
     parameters:
       aws_profile: 
         type: env_var_name
         default: J2_AWS_PROFILE
+      oidc_test_role_arn: 
+        type: env_var_name
+        default: OIDC_TEST_ROLE_ARN
     executor: jinja/default
     steps:
       - checkout
       - aws-cli/setup:
-          profile-name: << parameters.aws_profile >> 
+          profile-name: << parameters.aws_profile >>
+          role-arn: << parameters.oidc_test_role_arn >>
       - jinja/render:
           path: .test/
           outputdir: ./
@@ -36,11 +40,10 @@ workflows:
   version: 2
   main:
     jobs:
-      - setup-test-environment:
+      - setup-oidc-and-test-files:
           context: 
-            - tf-testing
-            - tf-module-testing
+            - se-eks-tf-module-testing
       - tf-validate:
-          context: tf-testing
+          #context: tf-testing
           requires: 
-            - setup-test-environment
+            - setup-oidc-and-test-files

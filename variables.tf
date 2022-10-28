@@ -27,16 +27,23 @@ variable "nodegroup_desired_capacity" {
   default     = 2
 }
 
-variable "cluster_access_iam_role_name" {
-  description = "IAM role that will be granted EKS cluster admin access."
-  default     = ""
+variable "cluster_access_iam_role_names" {
+  description = "IAM roles that will be granted EKS cluster admin access."
+  default     = []
 }
 
 
-variable "circleci_org_id" {
+variable "circleci_org_ids" {
   description = "IDs of CircleCI organizations to be granted access to EKS cluster."
   default     = ""
 }
+
+variable "circleci_org_ids_requiring_aws_oidc_provider" {
+  description = "IDs of CircleCI organizations for which an AWS OIDC provider will be created."
+  default     = ""
+}
+
+
 
 variable "circleci_org_friendly_name" {
   description = "Human readable name representing the CircleCI org, e.g. awesomecicd"

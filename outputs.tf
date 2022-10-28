@@ -51,6 +51,6 @@ output "kubeconfig_update_command" {
 EOF
 }
 
-output "circleci_oidc_iam_role_arn" {
-  value = aws_iam_role.circleci_access.arn
+output "circleci_oidc_iam_role_arns" {
+  value = [for role in aws_iam_role.circleci_org_access : role.arn]
 }

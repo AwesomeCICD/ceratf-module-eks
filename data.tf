@@ -22,8 +22,8 @@ locals {
   # Currently just maps an SSO role to a group with system:masters permission
   aws_auth_roles = concat(
     [
-      for name in [for role in data.aws_iam_role.cluster_access : role.name]: {
-        
+      for name in [for role in data.aws_iam_role.cluster_access : role.name] : {
+
         "groups" : [
           "system:masters"
         ],
@@ -32,7 +32,7 @@ locals {
       }
     ],
     [
-      for name in [for role in aws_iam_role.circleci_org_access : role.name]: {
+      for name in [for role in aws_iam_role.circleci_org_access : role.name] : {
         "groups" : [
           "system:masters"
         ],
@@ -45,5 +45,5 @@ locals {
 
 data "aws_iam_role" "cluster_access" {
   for_each = toset(var.cluster_access_iam_role_names)
-  name = each.key
+  name     = each.key
 }

@@ -28,8 +28,8 @@ resource "aws_iam_role" "circleci_org_access" {
   for_each = toset(distinct(concat(
     var.circleci_org_ids_requiring_aws_oidc_provider,
     var.circleci_org_ids
-    )))
-  
+  )))
+
   name = "cci-org-${substr(each.key, 0, 7)}-oidc-access"
 
   assume_role_policy = templatefile(
@@ -47,7 +47,7 @@ resource "aws_iam_role_policy_attachment" "circleci_org_access" {
   for_each = toset(distinct(concat(
     var.circleci_org_ids_requiring_aws_oidc_provider,
     var.circleci_org_ids
-    )))  
+  )))
 
   role       = aws_iam_role.circleci_org_access[each.key].name
   policy_arn = data.aws_iam_policy.administrator_access.arn

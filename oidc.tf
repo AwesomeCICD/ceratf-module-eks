@@ -22,12 +22,12 @@ resource "aws_iam_role" "circleci_access" {
   name = local.circleci_org_friendly_name
 
   assume_role_policy = templatefile(
-        "${path.module}/templates/oidc_assume_role.json.tpl",
-        {
-            AWS_ACCOUNT_ID  = data.aws_caller_identity.current.id,
-            CIRCLECI_ORG_ID = var.circleci_org_id
-        }
-    )
+    "${path.module}/templates/oidc_assume_role.json.tpl",
+    {
+      AWS_ACCOUNT_ID  = data.aws_caller_identity.current.id,
+      CIRCLECI_ORG_ID = var.circleci_org_id
+    }
+  )
 }
 
 

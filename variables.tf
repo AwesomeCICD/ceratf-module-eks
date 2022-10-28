@@ -40,7 +40,7 @@ variable "circleci_org_id" {
 
 variable "circleci_org_friendly_name" {
   description = "Human readable name representing the CircleCI org, e.g. awesomecicd"
-  default = ""
+  default     = ""
 }
 
 

@@ -34,7 +34,7 @@ variable "cluster_access_iam_role_names" {
 
 
 variable "circleci_org_ids" {
-  description = "IDs of CircleCI organizations to be granted access to EKS cluster."
+  description = "IDs of CircleCI organizations to be granted OIDC access to EKS cluster."
   default     = ""
 }
 

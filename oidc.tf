@@ -53,6 +53,7 @@ resource "aws_iam_role_policy_attachment" "circleci_org_access" {
   policy_arn = data.aws_iam_policy.administrator_access.arn
 }
 
+# TODO: Replace this with a custom policy granting access only to EKS resources
 data "aws_iam_policy" "administrator_access" {
   name = "AdministratorAccess"
 }

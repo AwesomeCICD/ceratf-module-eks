@@ -19,7 +19,7 @@ jobs:
       - checkout
       - aws-cli/setup:
           profile-name: << parameters.aws_profile >>
-          role-arn: << parameters.oidc_test_role_arn >>
+          role-arn: "arn:aws:iam::660990364978:role/awesomecicd-oidc-access" #<< parameters.oidc_test_role_arn >>
       - jinja/render:
           path: .test/
           outputdir: ./

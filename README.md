@@ -1,5 +1,10 @@
 # se-eks-cluster-tf-module
-Terraform module for deploying regional SE EKS clusters.  Uses a list of names to create two namespaces per name, `main-NAME` and `alt-NAME`.  Edits the aws-auth config map to grant `system:masters` access to a specified IAM role.
+Terraform module for deploying regional SE EKS clusters.  Does the following:
+- Deploys a VPC
+- Deploys an EKS cluster in the VPC
+- Create two namespaces per name, `main-NAME` and `alt-NAME`, based on a list of user
+- Update the aws-auth config map to grant `system:masters` access to specified IAM roles and to CircleCI orgs via OIDC
+- (Optional) Creates OIDC providers for CircleCI orgs
 
 ## Requirements
 
@@ -31,24 +36,29 @@ Terraform module for deploying regional SE EKS clusters.  Uses a list of names t
 |cluster_version | `1.22` | Desired EKS cluster version.|
 |node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
 |nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
-|cluster_access_iam_role_name|`""`|IAM role to which cluster admin access will be granted.|
+|cluster_access_iam_role_names|`[]`|IAM role to which cluster admin access will be granted.|
+|circleci_org_ids|`[]`|IDs of CircleCI organizations to be granted OIDC access to EKS cluster.|
+|circleci_org_ids_requiring_aws_oidc_provider|`[]`|IDs of CircleCI organizations for which an AWS OIDC provider will be created.|
 
 ### Example usage
 
+
 ```hcl
-module "se_eks_cluster" {
-  source = "" #Add private git repo URL here
+  cluster_suffix                = "arrakis"
+  user_list                     = ["alia", "bijaz", "cheni", "duncan"]
+  aws_profile                   = "arakeen-dev"
+  cluster_access_iam_role_names = ["AtreidesAdmins_b77a0890a53809d8"]
+  cluster_version            = "1.22"
+  node_instance_type         = "m5.large"
+  nodegroup_desired_capacity = "2"
 
-  cluster_suffix               = "arrakis"
-  user_list                    = ["alia", "bijaz", "cheni", "duncan"]
-  aws_profile                  = "arakeen-dev"
-  cluster_access_iam_role_name = "AtreidesAdmins_b77a0890a53809d8"
-  cluster_version              = "1.22"
-  node_instance_type           = "m5.large"
-  nodegroup_desired_capacity   = "2"
-
-  
-}
+  circleci_org_ids = [
+    "a1b2xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 
+    "c3e4xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
+  ]
+  circleci_org_ids_requiring_aws_oidc_provider = [
+    "9a8bxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
+  ]
 ```
 
 There is also an optional output that will print a command to update a user's kubeconfig file:

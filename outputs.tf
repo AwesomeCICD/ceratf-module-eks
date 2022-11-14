@@ -28,6 +28,7 @@ output "cluster_name" {
   value       = local.cluster_name
 }
 
+/*
 output "k8s_namespaces" {
   description = "List of namespaces created in the new cluster."
   value = concat(
@@ -35,6 +36,7 @@ output "k8s_namespaces" {
     [for ns in kubernetes_namespace.user_alt : ns.metadata[0].name]
   )
 }
+*/
 
 output "kubeconfig_update_command" {
   value = <<EOF

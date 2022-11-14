@@ -39,18 +39,14 @@ output "k8s_namespaces" {
 output "kubeconfig_update_command" {
   value = <<EOF
   To update your kubeconfig file, sign in to AWS SSO via CLI and then run the following commands:
-      
-      aws eks update-kubeconfig --name ${local.cluster_name} --region ${data.aws_region.current.name}
+
+      aws eks update-kubeconfig --name ${local.cluster_name} --region ${data.aws_region.current.name} --profile pipeline
       kubectl config rename-context ${module.eks.cluster_arn} ${local.cluster_name}
       kubectl config set-context ${local.cluster_name}
   
   To verify access to the cluster, try to list the namespaces:
       
-      kubectl get namespaces
+      kubectl get ns
 
 EOF
-}
-
-output "circleci_oidc_iam_role_arns" {
-  value = [for role in aws_iam_role.circleci_org_access : role.arn]
 }

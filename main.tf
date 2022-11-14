@@ -73,7 +73,10 @@ module "eks" {
   ]
 }
 
+# For debug use
+
 resource "null_resource" "kubeconfig" {
+  count = var.generate_kubeconfig == true ? 1 : 0
 
   triggers = {
     cluster_id = module.eks.cluster_id
@@ -83,6 +86,7 @@ resource "null_resource" "kubeconfig" {
     command = "aws eks update-kubeconfig --name ${module.eks.cluster_id} --kubeconfig '${path.cwd}/${module.eks.cluster_id}_kubeconfig' --profile ${var.aws_profile} --region ${data.aws_region.current.name}"
   }
 }
+
 
 
 resource "random_string" "suffix" {

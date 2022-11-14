@@ -7,15 +7,12 @@ variable "cluster_suffix" {
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
+/*
 variable "user_list" {
-  description = "List of users who will be using the cluster."
+  description = "List of users for whom namespaces will be created."
   default     = []
 }
-
-variable "aws_profile" {
-  description = "AWS profile used for generating kubeconfig."
-  default     = "default"
-}
+*/
 
 variable "node_instance_type" {
   description = "Instance type that will be used in nodegroups."
@@ -27,12 +24,12 @@ variable "nodegroup_desired_capacity" {
   default     = 2
 }
 
-variable "cluster_access_iam_role_names" {
-  description = "IAM roles that will be granted EKS cluster admin access."
-  default     = []
+variable "additional_iam_role_names" {
+  description = "Additional IAM roles to be added to the system:masters group in the EKS cluster."
+  default = []
 }
 
-
+/*
 variable "circleci_org_ids" {
   description = "IDs of CircleCI organizations to be granted OIDC access to EKS cluster."
   default     = ""
@@ -42,14 +39,7 @@ variable "circleci_org_ids_requiring_aws_oidc_provider" {
   description = "IDs of CircleCI organizations for which an AWS OIDC provider will be created."
   default     = ""
 }
-
-
-
-variable "circleci_org_friendly_name" {
-  description = "Human readable name representing the CircleCI org, e.g. awesomecicd"
-  default     = ""
-}
-
+*/
 
 variable "region_short_name_table" {
   description = "Region short name mappings. Current as of 2022-10-17."
@@ -78,4 +68,14 @@ variable "region_short_name_table" {
     us-west-1 : "usw1",
     us-west-2 : "usw2"
   }
+}
+
+variable "generate_kubeconfig" {
+  description = "Set to true to generate a kubeconfig locally for debug/testing."
+  default = false
+}
+
+variable "aws_profile" {
+  description = "Only required if generating a kubeconfig."
+  default = "default"
 }

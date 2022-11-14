@@ -7,13 +7,6 @@ variable "cluster_suffix" {
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
-/*
-variable "user_list" {
-  description = "List of users for whom namespaces will be created."
-  default     = []
-}
-*/
-
 variable "node_instance_type" {
   description = "Instance type that will be used in nodegroups."
   default     = "m5.large"
@@ -28,18 +21,6 @@ variable "additional_iam_role_names" {
   description = "Additional IAM roles to be added to the system:masters group in the EKS cluster."
   default     = []
 }
-
-/*
-variable "circleci_org_ids" {
-  description = "IDs of CircleCI organizations to be granted OIDC access to EKS cluster."
-  default     = ""
-}
-
-variable "circleci_org_ids_requiring_aws_oidc_provider" {
-  description = "IDs of CircleCI organizations for which an AWS OIDC provider will be created."
-  default     = ""
-}
-*/
 
 variable "region_short_name_table" {
   description = "Region short name mappings. Current as of 2022-10-17."

@@ -2,20 +2,18 @@
 Terraform module for deploying regional SE EKS clusters.  Does the following:
 - Deploys a VPC
 - Deploys an EKS cluster in the VPC
-- Create two namespaces per name, `main-NAME` and `alt-NAME`, based on a list of user
-- Update the aws-auth config map to grant `system:masters` access to specified IAM roles and to CircleCI orgs via OIDC
-- (Optional) Creates OIDC providers for CircleCI orgs
+- Update the aws-auth config map to grant `system:masters` access to the SE EKS role stored in the se-eks-cluster-global plan state as well as any additional IAM roles
 
 ## Requirements
 
 - Terraform >= 1.0.9
 - aws-cli >= 2.8.3
+- Access to state file from se-eks-cluster-global plan
 
 ## How to Use
 
 1. Drop the [example module declaration](#example-usage) shown below into a Terraform plan and fill in the variables.
 2. Run the Terraform plan.
-3. Store the resulting kubeconfig file in order to access the cluster.
 
 
 ## Terraform Variables
@@ -31,34 +29,26 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 
 | Name | Default | Description|
 |------|---------|------------|
-|aws_profile| `default` | AWS profile used for generating kubeconfig. |
-|user_list| none | List of users for whom k8s namespaces will be created.|
 |cluster_version | `1.22` | Desired EKS cluster version.|
 |node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
 |nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
-|cluster_access_iam_role_names|`[]`|IAM role to which cluster admin access will be granted.|
-|circleci_org_ids|`[]`|IDs of CircleCI organizations to be granted OIDC access to EKS cluster.|
-|circleci_org_ids_requiring_aws_oidc_provider|`[]`|IDs of CircleCI organizations for which an AWS OIDC provider will be created.|
+|additional_iam_role_names|`[]`|Additional IAM roles to be added to the system:masters group in the EKS cluster.|
+|generate_kubeconfig| `false` | Whether or not to generate a local kubeconfig file for troubleshooting. |
+|aws_profile| `default` | AWS profile used for generating kubeconfig. |
+
 
 ### Example usage
 
 
 ```hcl
-  cluster_suffix                = "arrakis"
-  user_list                     = ["alia", "bijaz", "cheni", "duncan"]
-  aws_profile                   = "arakeen-dev"
-  cluster_access_iam_role_names = ["AtreidesAdmins_b77a0890a53809d8"]
+module "se_eks_cluster" {
+  source = "git@github.com:AwesomeCICD/se-eks-cluster-tf-module.git"
+
+  cluster_suffix             = "foobar"
   cluster_version            = "1.22"
   node_instance_type         = "m5.large"
   nodegroup_desired_capacity = "2"
-
-  circleci_org_ids = [
-    "a1b2xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 
-    "c3e4xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
-  ]
-  circleci_org_ids_requiring_aws_oidc_provider = [
-    "9a8bxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
-  ]
+}
 ```
 
 There is also an optional output that will print a command to update a user's kubeconfig file:
@@ -72,26 +62,16 @@ output "kubeconfig_update_command" {
 
 ## Resources Created by Terraform
 
-For a user_list `["alia", "bijaz", "cheni", "duncan"]`:
-
 - data.aws_availability_zones.available
 - data.aws_caller_identity.current
 - data.aws_eks_cluster.cluster
 - data.aws_eks_cluster_auth.cluster
-- data.aws_iam_role.cluster_access
 - data.aws_region.current
+- data.terraform_remote_state.se_eks_cluster_global
 - aws_security_group.all_worker_mgmt
 - aws_security_group.worker_group_mgmt_one
 - aws_security_group.worker_group_mgmt_two
-- kubernetes_namespace.user_alt["alia"]
-- kubernetes_namespace.user_alt["bijaz"]
-- kubernetes_namespace.user_alt["cheni"]
-- kubernetes_namespace.user_alt["duncan"]
-- kubernetes_namespace.user_main["alia"]
-- kubernetes_namespace.user_main["bijaz"]
-- kubernetes_namespace.user_main["cheni"]
-- kubernetes_namespace.user_main["duncan"]
-- null_resource.cluster_creator_kubeconfig
+- null_resource.kubeconfig[0]
 - random_string.suffix
 - module.eks.data.aws_caller_identity.current
 - module.eks.data.aws_default_tags.current
@@ -162,4 +142,3 @@ For a user_list `["alia", "bijaz", "cheni", "duncan"]`:
 - module.eks.module.eks_managed_node_group["1"].aws_security_group.this[0]
 - module.eks.module.kms.data.aws_caller_identity.current
 - module.eks.module.kms.data.aws_partition.current
-

@@ -17,9 +17,9 @@ data "terraform_remote_state" "se_eks_cluster_global" {
   backend = "s3"
 
   config = {
-    bucket         = "se-cluster-tf"
-    region         = "us-west-2"
-    key            = "se-eks-cluster/global/terraform.tfstate"
+    bucket = "se-cluster-tf"
+    region = "us-west-2"
+    key    = "se-eks-cluster/global/terraform.tfstate"
   }
 }
 

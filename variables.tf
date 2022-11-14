@@ -26,7 +26,7 @@ variable "nodegroup_desired_capacity" {
 
 variable "additional_iam_role_names" {
   description = "Additional IAM roles to be added to the system:masters group in the EKS cluster."
-  default = []
+  default     = []
 }
 
 /*
@@ -72,10 +72,10 @@ variable "region_short_name_table" {
 
 variable "generate_kubeconfig" {
   description = "Set to true to generate a kubeconfig locally for debug/testing."
-  default = false
+  default     = false
 }
 
 variable "aws_profile" {
   description = "Only required if generating a kubeconfig."
-  default = "default"
+  default     = "default"
 }

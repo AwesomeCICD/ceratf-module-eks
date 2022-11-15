@@ -44,8 +44,10 @@ workflows:
   main:
     jobs:
       - setup-oidc-and-test-files:
+          name: Set up OIDC Auth with AWS & Render Templated Test Files
           context: 
             - se-eks-tf-module-testing
       - tf-validate:
+          name: Validate Terraform Plan
           requires: 
-            - setup-oidc-and-test-files
+            - Set up OIDC Auth with AWS & Render Templated Test Files

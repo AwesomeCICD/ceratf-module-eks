@@ -52,3 +52,15 @@ output "kubeconfig_update_command" {
 
 EOF
 }
+
+output "k8s_provider_host" {
+  value = data.aws_eks_cluster.cluster.endpoint
+}
+
+output "k8s_provider_token" {
+  value = data.aws_eks_cluster_auth.cluster.token
+}
+
+output "k8s_provider_cluster_ca_certificate" {
+  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+}

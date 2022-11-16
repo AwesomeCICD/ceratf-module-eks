@@ -47,7 +47,7 @@ module "eks" {
     root_volume_type                     = "gp2"
     instance_type                        = var.node_instance_type
     additional_userdata                  = "echo foo bar"
-    asg_desired_capacity                 = var.nodegroup_desired_capacity
+    desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
     tags = {
       owner = "solutions@circleci.com"
@@ -65,10 +65,11 @@ module "eks" {
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     },
     {
-      name                          = "${local.cluster_name}-ng-2"
-      launch_template_name          = "${local.cluster_name}-ng-2"
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
-      iam_role_use_name_prefix      = false #workaround for bug in 18.30.2
+      name                            = "${local.cluster_name}-ng-2"
+      launch_template_name            = "${local.cluster_name}-ng-2"
+      additional_security_group_ids   = [aws_security_group.worker_group_mgmt_two.id]
+      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
+      iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     }
   ]
 }

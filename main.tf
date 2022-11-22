@@ -39,6 +39,7 @@ module "eks" {
   cluster_name              = local.cluster_name
   cluster_version           = var.cluster_version
   subnet_ids                = module.vpc.private_subnets
+  enable_irsa               = false #the OIDC provider for EKS cluster access is created in the global infra TF plan
   vpc_id                    = module.vpc.vpc_id
   aws_auth_roles            = local.aws_auth_roles
   manage_aws_auth_configmap = true

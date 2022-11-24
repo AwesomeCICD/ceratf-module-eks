@@ -12,16 +12,6 @@ data "aws_availability_zones" "available" {}
 
 data "aws_caller_identity" "current" {}
 
-# Read the remote state of the se-eks-cluster-global plan to get its outputs
-data "terraform_remote_state" "se_eks_cluster_global" {
-  backend = "s3"
-
-  config = {
-    bucket = "se-cluster-tf"
-    region = "us-west-2"
-    key    = "se-eks-cluster/global/terraform.tfstate"
-  }
-}
 
 locals {
   /*
@@ -33,8 +23,7 @@ locals {
   # Maps the SSO role plus any additional specified roles to the system:masters group
   aws_auth_roles = concat(
     [
-      #for name in [for role in concat(var.additional_iam_role_names, [data.terraform_remote_state.se_eks_cluster_global.outputs.se_sso_iam_role]) : role.name] : {
-      for name in concat(var.additional_iam_role_names, [data.terraform_remote_state.se_eks_cluster_global.outputs.eks_access_iam_role_name]) : {
+      for name in concat(var.additional_iam_role_names, [var.eks_access_iam_role_name]) : {
 
         "groups" : [
           "system:masters"

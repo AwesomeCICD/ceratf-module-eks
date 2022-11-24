@@ -32,6 +32,7 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 |cluster_version | `1.22` | Desired EKS cluster version.|
 |node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
 |nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
+|eks_access_iam_role_name|`""`|IAM role to be used globally by SEs for cluster access. Will added to the system:masters group in the EKS cluster.|
 |additional_iam_role_names|`[]`|Additional IAM roles to be added to the system:masters group in the EKS cluster.|
 |generate_kubeconfig| `false` | Whether or not to generate a local kubeconfig file for troubleshooting. |
 |aws_profile| `default` | AWS profile used for generating kubeconfig. |
@@ -67,7 +68,6 @@ output "kubeconfig_update_command" {
 - data.aws_eks_cluster.cluster
 - data.aws_eks_cluster_auth.cluster
 - data.aws_region.current
-- data.terraform_remote_state.se_eks_cluster_global
 - aws_security_group.all_worker_mgmt
 - aws_security_group.worker_group_mgmt_one
 - aws_security_group.worker_group_mgmt_two

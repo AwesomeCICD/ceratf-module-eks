@@ -17,6 +17,12 @@ variable "nodegroup_desired_capacity" {
   default     = 2
 }
 
+variable "eks_access_iam_role_name" {
+  description = "IAM role to be used globally by SEs for cluster access. Will added to the system:masters group in the EKS cluster."
+  default     = []
+}
+
+
 variable "additional_iam_role_names" {
   description = "Additional IAM roles to be added to the system:masters group in the EKS cluster."
   default     = []

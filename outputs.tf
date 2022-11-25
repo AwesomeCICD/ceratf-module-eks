@@ -13,32 +13,33 @@ output "cluster_arn" {
   value       = module.eks.cluster_arn
 }
 
+output "cluster_name" {
+  description = "EKS cluster name."
+  value       = local.cluster_name
+}
+
+output "cluster_auth_token" {
+  description = "EKS cluster authentication token."
+  value = data.aws_eks_cluster_auth.cluster.token
+}
+
+output "cluster_ca_certificate" {
+  description = "EKS cluster CA certificate (plain text PEM format)."
+  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+}
+
 output "cluster_security_group_id" {
   description = "Security group ids attached to the cluster control plane."
   value       = module.eks.cluster_security_group_id
 }
 
-output "region" {
-  description = "AWS region"
+output "aws_region" {
+  description = "AWS region in which the cluster is deployed."
   value       = data.aws_region.current.name
 }
 
-output "cluster_name" {
-  description = "Kubernetes Cluster Name"
-  value       = local.cluster_name
-}
-
-/*
-output "k8s_namespaces" {
-  description = "List of namespaces created in the new cluster."
-  value = concat(
-    [for ns in kubernetes_namespace.user_main : ns.metadata[0].name],
-    [for ns in kubernetes_namespace.user_alt : ns.metadata[0].name]
-  )
-}
-*/
-
 output "kubeconfig_update_command" {
+  description = "Prints commands for updating your local kubeconfig file."
   value = <<EOF
   To update your kubeconfig file, sign in to AWS SSO via CLI and then run the following commands:
 
@@ -51,16 +52,4 @@ output "kubeconfig_update_command" {
       kubectl get ns
 
 EOF
-}
-
-output "k8s_provider_host" {
-  value = data.aws_eks_cluster.cluster.endpoint
-}
-
-output "k8s_provider_token" {
-  value = data.aws_eks_cluster_auth.cluster.token
-}
-
-output "k8s_provider_cluster_ca_certificate" {
-  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
 }

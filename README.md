@@ -37,9 +37,22 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 |generate_kubeconfig| `false` | Whether or not to generate a local kubeconfig file for troubleshooting. |
 |aws_profile| `default` | AWS profile used for generating kubeconfig. |
 
+## Terraform Outputs
 
-### Example usage
+| Name | Description|
+|------|-----------|
+| cluster_id | EKS cluster ID. |
+| cluster_endpoint | Endpoint for EKS control plane. |
+| cluster_arn | EKS cluster ARN. |
+| cluster_name | EKS cluster name. |
+| cluster_auth_token | EKS cluster authentication token. |
+| cluster_ca_certificate | EKS cluster CA certificate (plain text PEM format). |
+| cluster_security_group_id | Security group ids attached to the cluster control plane. |
+| aws_region | AWS region in which the cluster is deployed. |
+| kubeconfig_update_command | Prints commands for updating your local kubeconfig file. |
 
+
+## Example usage
 
 ```hcl
 module "se_eks_cluster" {

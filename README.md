@@ -1,14 +1,14 @@
-# se-eks-cluster-tf-module
+# ceratf-module-eks
 Terraform module for deploying regional SE EKS clusters.  Does the following:
 - Deploys a VPC
 - Deploys an EKS cluster in the VPC
-- Update the aws-auth config map to grant `system:masters` access to the SE EKS role stored in the se-eks-cluster-global plan state as well as any additional IAM roles
+- Update the aws-auth config map to grant `system:masters` access to the SE EKS role stored in the ceratf-deployment-global plan state as well as any additional IAM roles
 
 ## Requirements
 
 - Terraform >= 1.0.9
 - aws-cli >= 2.8.3
-- Access to state file from se-eks-cluster-global plan
+- Access to state file from ceratf-deployment-global plan
 
 ## How to Use
 
@@ -56,7 +56,7 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 
 ```hcl
 module "se_eks_cluster" {
-  source = "git@github.com:AwesomeCICD/se-eks-cluster-tf-module.git"
+  source = "git@github.com:AwesomeCICD/ceratf-module-eks.git"
 
   cluster_suffix             = "foobar"
   cluster_version            = "1.22"

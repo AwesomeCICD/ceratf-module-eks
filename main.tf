@@ -59,16 +59,16 @@ module "eks" {
 
   eks_managed_node_groups = [
     {
-      name                            = "${local.cluster_name}-ng-1"
-      launch_template_name            = "${local.cluster_name}-ng-1"
-      additional_security_group_ids   = [aws_security_group.worker_group_mgmt_one.id]
+      name                 = "${local.cluster_name}-ng-1"
+      launch_template_name = "${local.cluster_name}-ng-1"
+      #additional_security_group_ids   = [aws_security_group.worker_group_mgmt_one.id]
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     },
     {
-      name                            = "${local.cluster_name}-ng-2"
-      launch_template_name            = "${local.cluster_name}-ng-2"
-      additional_security_group_ids   = [aws_security_group.worker_group_mgmt_two.id]
+      name                 = "${local.cluster_name}-ng-2"
+      launch_template_name = "${local.cluster_name}-ng-2"
+      #additional_security_group_ids   = [aws_security_group.worker_group_mgmt_two.id]
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     }
@@ -98,11 +98,11 @@ resource "random_string" "suffix" {
 
 
 resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
-  for_each = [
+  for_each = toset([
     module.eks.cluster_primary_security_group_id,
     module.eks.cluster_security_group_id,
     module.eks.node_security_group_id
-  ]
+  ])
 
   description = "Allow SSH from private CIDRs."
   type        = "ingress"

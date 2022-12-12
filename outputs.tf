@@ -28,11 +28,6 @@ output "cluster_ca_certificate" {
   value       = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
 }
 
-output "cluster_security_group_id" {
-  description = "Security group ids attached to the cluster control plane."
-  value       = module.eks.cluster_security_group_id
-}
-
 output "aws_region" {
   description = "AWS region in which the cluster is deployed."
   value       = data.aws_region.current.name
@@ -56,10 +51,10 @@ EOF
 
 
 
-output "cluster_primary_security_group_id" {
-  description = "ID of cluster security group that was created by Amazon EKS for the cluster."
-  value       = module.eks.cluster_primary_security_group_id
-}
+#output "cluster_primary_security_group_id" {
+#  description = "ID of cluster security group that was created by Amazon EKS for the cluster."
+#  value       = module.eks.cluster_primary_security_group_id
+#}
 
 output "cluster_security_group_id" {
   description = "ID of the cluster security group."

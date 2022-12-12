@@ -20,12 +20,12 @@ output "cluster_name" {
 
 output "cluster_auth_token" {
   description = "EKS cluster authentication token."
-  value = data.aws_eks_cluster_auth.cluster.token
+  value       = data.aws_eks_cluster_auth.cluster.token
 }
 
 output "cluster_ca_certificate" {
   description = "EKS cluster CA certificate (plain text PEM format)."
-  value = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  value       = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
 }
 
 output "cluster_security_group_id" {
@@ -40,7 +40,7 @@ output "aws_region" {
 
 output "kubeconfig_update_command" {
   description = "Prints commands for updating your local kubeconfig file."
-  value = <<EOF
+  value       = <<EOF
   To update your kubeconfig file, sign in to AWS SSO via CLI and then run the following commands:
 
       aws eks update-kubeconfig --name ${local.cluster_name} --region ${data.aws_region.current.name} --profile pipeline
@@ -52,4 +52,21 @@ output "kubeconfig_update_command" {
       kubectl get ns
 
 EOF
+}
+
+
+
+output "cluster_primary_security_group_id" {
+  description = "ID of cluster security group that was created by Amazon EKS for the cluster."
+  value       = module.eks.cluster_primary_security_group_id
+}
+
+output "cluster_security_group_id" {
+  description = "ID of the cluster security group."
+  value       = module.eks.cluster_security_group_id
+}
+
+output "node_security_group_id" {
+  description = "ID of the node security group."
+  value       = module.eks.node_security_group_id
 }

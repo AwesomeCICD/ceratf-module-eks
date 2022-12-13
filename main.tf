@@ -130,4 +130,23 @@ resource "aws_security_group_rule" "allow_all_outbound" {
   protocol          = "-1"
   from_port         = 0
   security_group_id = each.value
+
+  cidr_blocks      = ["0.0.0.0/0"]
+  ipv6_cidr_blocks = ["::/0"]
+}
+
+resource "aws_security_group_rule" "allow_all_internal" {
+  for_each = toset([
+    module.eks.cluster_primary_security_group_id,
+    module.eks.cluster_security_group_id,
+    module.eks.node_security_group_id
+  ])
+
+  type              = "ingress"
+  to_port           = 0
+  protocol          = "-1"
+  from_port         = 0
+  security_group_id = each.value
+
+  self = true
 }

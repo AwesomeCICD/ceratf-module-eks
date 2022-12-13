@@ -116,4 +116,18 @@ resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
   ]
   security_group_id = each.value
 }
-      
+
+
+resource "aws_security_group_rule" "allow_all_outbound" {
+  for_each = toset([
+    module.eks.cluster_primary_security_group_id,
+    module.eks.cluster_security_group_id,
+    module.eks.node_security_group_id
+  ])
+
+  type              = "egress"
+  to_port           = 0
+  protocol          = "-1"
+  from_port         = 0
+  security_group_id = each.value
+}

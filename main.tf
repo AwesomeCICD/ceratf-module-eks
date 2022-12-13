@@ -99,7 +99,6 @@ resource "random_string" "suffix" {
 
 resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
   for_each = toset([
-    module.eks.cluster_primary_security_group_id,
     module.eks.cluster_security_group_id,
     module.eks.node_security_group_id
   ])
@@ -120,7 +119,6 @@ resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
 
 resource "aws_security_group_rule" "allow_all_outbound" {
   for_each = toset([
-    module.eks.cluster_primary_security_group_id,
     module.eks.cluster_security_group_id,
     module.eks.node_security_group_id
   ])
@@ -137,7 +135,6 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 
 resource "aws_security_group_rule" "allow_all_internal" {
   for_each = toset([
-    module.eks.cluster_primary_security_group_id,
     module.eks.cluster_security_group_id,
     module.eks.node_security_group_id
   ])

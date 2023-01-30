@@ -65,3 +65,8 @@ output "node_security_group_id" {
   description = "ID of the node security group."
   value       = module.eks.node_security_group_id
 }
+
+output "oidc_provider_arn" {
+  description = "ID of the node security group."
+  value       = module.eks.oidc_provider_arn
+}

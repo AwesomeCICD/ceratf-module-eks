@@ -34,12 +34,14 @@ module "vpc" {
 
 
 module "eks" {
-  source                    = "terraform-aws-modules/eks/aws"
-  version                   = "18.30.2"
-  cluster_name              = local.cluster_name
-  cluster_version           = var.cluster_version
-  subnet_ids                = module.vpc.private_subnets
-  enable_irsa               = false #the OIDC provider for EKS cluster access is created in the global infra TF plan
+  source          = "terraform-aws-modules/eks/aws"
+  version         = "18.30.2"
+  cluster_name    = local.cluster_name
+  cluster_version = var.cluster_version
+  subnet_ids      = module.vpc.private_subnets
+  # The OIDC provider for EKS cluster access via SSO is created in the global infra TF plan
+  # enable_irsa creates a separate OIDC provider used solely for IRSA (IAM Roles for K8s Service Accounts)
+  enable_irsa               = true
   vpc_id                    = module.vpc.vpc_id
   aws_auth_roles            = local.aws_auth_roles
   manage_aws_auth_configmap = true

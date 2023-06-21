@@ -46,6 +46,38 @@ module "eks" {
   aws_auth_roles            = local.aws_auth_roles
   manage_aws_auth_configmap = true
 
+  cluster_security_group_additional_rules = {
+    ingress_cluster_ssh = {
+      description = "Allow SSH from private CIDRs."
+      type        = "ingress"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ]
+    },
+    egress_cluster_all = {
+      description      = "Allow all cluster outbound."
+      type             = "egress"
+      to_port          = 0
+      protocol         = "-1"
+      from_port        = 0
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    },
+    ingress_cluster_self = {
+      description = "Allow all traffic within cluster."
+      type        = "ingress"
+      to_port     = 0
+      protocol    = "-1"
+      from_port   = 0
+      self        = true
+    }
+  }
+
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
     instance_type                        = var.node_instance_type
@@ -98,7 +130,7 @@ resource "random_string" "suffix" {
   special = false
 }
 
-
+/*
 resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
   for_each = toset([
     module.eks.cluster_security_group_id,
@@ -161,3 +193,4 @@ resource "aws_security_group_rule" "allow_all_internal" {
     module.eks
   ]
 }
+*/

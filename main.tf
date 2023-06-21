@@ -116,6 +116,10 @@ resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
     "192.168.0.0/16"
   ]
   security_group_id = each.value
+
+  depends_on = [
+    module.eks
+  ]
 }
 
 
@@ -133,6 +137,10 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 
   cidr_blocks      = ["0.0.0.0/0"]
   ipv6_cidr_blocks = ["::/0"]
+
+  depends_on = [
+    module.eks
+  ]
 }
 
 resource "aws_security_group_rule" "allow_all_internal" {
@@ -148,4 +156,8 @@ resource "aws_security_group_rule" "allow_all_internal" {
   security_group_id = each.value
 
   self = true
+
+  depends_on = [
+    module.eks
+  ]
 }

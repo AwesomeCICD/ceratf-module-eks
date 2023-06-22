@@ -17,6 +17,8 @@ module "vpc" {
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
+  manage_default_network_acl = false #added to avoid bug in v5.0.0
+
   tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
   }

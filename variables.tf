@@ -76,3 +76,29 @@ variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
   default     = true #TF default, not AWS default
 }
+
+variable "addons" {
+  type = list(object({
+    name    = string
+    version = string
+  }))
+
+  default = [
+    {
+      name    = "kube-proxy"
+      version = "v1.27.1-eksbuild.1"
+    },
+    {
+      name    = "vpc-cni"
+      version = "v1.13.1-eksbuild.1"
+    },
+    {
+      name    = "coredns"
+      version = "v1.10.1-eksbuild.1"
+    },
+    {
+      name    = "aws-ebs-csi-driver"
+      version = "v1.19.0-eksbuild.2"
+    }
+  ]
+}

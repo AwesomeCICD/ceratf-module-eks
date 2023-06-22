@@ -41,7 +41,7 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 
 | Name | Description|
 |------|-----------|
-| cluster_id | EKS cluster ID. |
+| cluster_name | EKS cluster name. |
 | cluster_endpoint | Endpoint for EKS control plane. |
 | cluster_arn | EKS cluster ARN. |
 | cluster_name | EKS cluster name. |

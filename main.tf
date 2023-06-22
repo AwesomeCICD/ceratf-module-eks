@@ -23,12 +23,12 @@ module "vpc" {
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
+    "kubernetes.io/role/elb"                              = "1"
   }
 
   private_subnet_tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
+    "kubernetes.io/role/internal-elb"                     = "1"
   }
 }
 
@@ -95,14 +95,14 @@ module "eks" {
 
   eks_managed_node_groups = [
     {
-      name                 = "${local.derived_cluster_name}-ng-1"
-      launch_template_name = "${local.derived_cluster_name}-ng-1"
+      name                            = "${local.derived_cluster_name}-ng-1"
+      launch_template_name            = "${local.derived_cluster_name}-ng-1"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     },
     {
-      name                 = "${local.derived_cluster_name}-ng-2"
-      launch_template_name = "${local.derived_cluster_name}-ng-2"
+      name                            = "${local.derived_cluster_name}-ng-2"
+      launch_template_name            = "${local.derived_cluster_name}-ng-2"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
     }

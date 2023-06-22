@@ -66,3 +66,8 @@ variable "aws_profile" {
   description = "Only required if generating a kubeconfig."
   default     = "default"
 }
+
+variable "noinput_cluster_endpoint_public_accessdegroup_desired_capacity" {
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
+  default     = false
+}

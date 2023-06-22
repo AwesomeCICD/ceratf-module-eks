@@ -48,6 +48,7 @@ module "eks" {
   aws_auth_roles            = local.aws_auth_roles
   create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
+  input_cluster_endpoint_public_access  = var.input_cluster_endpoint_public_access
 
   /*
   cluster_security_group_additional_rules = {

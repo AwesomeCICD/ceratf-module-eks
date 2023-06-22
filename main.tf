@@ -46,6 +46,7 @@ module "eks" {
   aws_auth_roles            = local.aws_auth_roles
   manage_aws_auth_configmap = true
 
+  /*
   cluster_security_group_additional_rules = {
     ingress_cluster_ssh = {
       description = "Allow SSH from private CIDRs."
@@ -77,6 +78,7 @@ module "eks" {
       self        = true
     }
   }
+  */
 
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"

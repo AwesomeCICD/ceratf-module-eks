@@ -36,6 +36,7 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 |additional_iam_role_names|`[]`|Additional IAM roles to be added to the system:masters group in the EKS cluster.|
 |generate_kubeconfig| `false` | Whether or not to generate a local kubeconfig file for troubleshooting. |
 |aws_profile| `default` | AWS profile used for generating kubeconfig. |
+| cluster_endpoint_public_access | false | Indicates whether or not the Amazon EKS public API server endpoint is enabled |
 
 ## Terraform Outputs
 

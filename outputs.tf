@@ -18,16 +18,6 @@ output "cluster_name" {
   value       = local.derived_cluster_name
 }
 
-output "cluster_auth_token" {
-  description = "EKS cluster authentication token."
-  value       = data.aws_eks_cluster_auth.cluster.token
-}
-
-output "cluster_ca_certificate" {
-  description = "EKS cluster CA certificate (plain text PEM format)."
-  value       = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-}
-
 output "aws_region" {
   description = "AWS region in which the cluster is deployed."
   value       = data.aws_region.current.name

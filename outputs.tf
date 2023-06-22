@@ -9,12 +9,12 @@ output "cluster_endpoint" {
 }
 output "cluster_auth_token" {
   description = "EKS cluster authentication token."
-  value       = data.aws_eks_cluster_auth.cluster.token
+  value       = data.aws_eks_cluster_auth.eks.token
 }
 
 output "cluster_ca_certificate" {
   description = "EKS cluster CA certificate (plain text PEM format)."
-  value       = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  value       = base64decode(data.aws_eks_cluster.eks.certificate_authority.0.data)
 }
 
 output "cluster_arn" {

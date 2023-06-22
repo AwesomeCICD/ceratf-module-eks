@@ -7,6 +7,15 @@ output "cluster_endpoint" {
   description = "Endpoint for EKS control plane."
   value       = module.eks.cluster_endpoint
 }
+output "cluster_auth_token" {
+  description = "EKS cluster authentication token."
+  value       = data.aws_eks_cluster_auth.cluster.token
+}
+
+output "cluster_ca_certificate" {
+  description = "EKS cluster CA certificate (plain text PEM format)."
+  value       = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+}
 
 output "cluster_arn" {
   description = "EKS cluster ARN."

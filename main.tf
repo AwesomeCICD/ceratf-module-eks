@@ -46,7 +46,7 @@ module "eks" {
   enable_irsa               = true
   vpc_id                    = module.vpc.vpc_id
   aws_auth_roles            = local.aws_auth_roles
-  create_aws_auth_configmap = true
+  #create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
 
   /*

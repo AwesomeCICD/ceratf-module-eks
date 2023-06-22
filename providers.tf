@@ -1,12 +1,5 @@
 #required in order to modify configmap aws-auth
 
-data "aws_eks_cluster" "eks" {
-  name = module.eks.cluster_name
-}
-
-data "aws_eks_cluster_auth" "eks" {
-  name = module.eks.cluster_name
-}
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.eks.endpoint

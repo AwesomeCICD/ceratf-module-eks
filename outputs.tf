@@ -1,4 +1,4 @@
-output "cluster_name" {
+output "cluster_id" {
   description = "EKS cluster ID."
   value       = module.eks.cluster_name
 }
@@ -15,7 +15,7 @@ output "cluster_arn" {
 
 output "cluster_name" {
   description = "EKS cluster name."
-  value       = local.cluster_name
+  value       = local.derived_cluster_name
 }
 
 output "cluster_auth_token" {

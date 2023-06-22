@@ -67,7 +67,7 @@ variable "aws_profile" {
   default     = "default"
 }
 
-variable "noinput_cluster_endpoint_public_accessdegroup_desired_capacity" {
+variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
   default     = false
 }

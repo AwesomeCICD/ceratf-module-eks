@@ -87,7 +87,7 @@ module "eks" {
 
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
-    instance_types                       = [ var.node_instance_type ]
+    instance_types                       = [var.node_instance_type]
     additional_userdata                  = "echo foo bar"
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2

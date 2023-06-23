@@ -83,7 +83,10 @@ variable "addons" {
     version = string
   }))
 
-  default = []
+  default = [{
+    name    = "aws-ebs-csi-driver"
+    version = "v1.19.0-eksbuild.2"
+  }]
 }
 /*
   default = [

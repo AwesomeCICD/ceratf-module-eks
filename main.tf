@@ -51,38 +51,6 @@ module "eks" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
-  cluster_security_group_additional_rules = {
-    ingress_cluster_ssh = {
-      description = "Allow SSH from private CIDRs."
-      type        = "ingress"
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = [
-        "10.0.0.0/8",
-        "172.16.0.0/12",
-        "192.168.0.0/16"
-      ]
-    },
-    egress_cluster_all = {
-      description      = "Allow all cluster outbound."
-      type             = "egress"
-      to_port          = 0
-      protocol         = "-1"
-      from_port        = 0
-      cidr_blocks      = ["0.0.0.0/0"]
-      ipv6_cidr_blocks = ["::/0"]
-    },
-    ingress_cluster_self = {
-      description = "Allow all traffic within cluster."
-      type        = "ingress"
-      to_port     = 0
-      protocol    = "-1"
-      from_port   = 0
-      self        = true
-    }
-  }
-
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
     instance_types                       = [var.node_instance_type]

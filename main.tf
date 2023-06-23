@@ -119,7 +119,7 @@ resource "aws_eks_addon" "addons_coredns" {
   addon_name                  = "coredns"
   addon_version               = "v1.10.1-eksbuild.1"
   resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "NONE"
+  resolve_conflicts_on_update = "OVERWRITE"
 }
 
 resource "aws_eks_addon" "addons" {

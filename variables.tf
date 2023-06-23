@@ -77,18 +77,21 @@ variable "cluster_endpoint_private_access" {
   default     = true #TF default, not AWS default
 }
 
+/*
 variable "addons" {
   type = list(object({
     name    = string
     version = string
   }))
 
-  default = [{
-    name    = "aws-ebs-csi-driver"
-    version = "v1.19.0-eksbuild.2"
-  }]
+  default = [
+    {
+      name    = "aws-ebs-csi-driver"
+      version = "v1.19.0-eksbuild.2"
+    }
+  ]
 }
-/*
+
   default = [
     {
       name    = "kube-proxy"

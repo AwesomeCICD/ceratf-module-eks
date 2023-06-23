@@ -51,7 +51,7 @@ module "eks" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
-  /*
+  
   cluster_security_group_additional_rules = {
     ingress_cluster_ssh = {
       description = "Allow SSH from private CIDRs."
@@ -83,11 +83,11 @@ module "eks" {
       self        = true
     }
   }
-  */
+  
 
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
-    instance_type                        = var.node_instance_type
+    instance_types                       = [ var.node_instance_type ]
     additional_userdata                  = "echo foo bar"
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
@@ -185,75 +185,3 @@ resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
   role       = aws_iam_role.eks_addon_ebs_csi.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
-
-
-
-#-------------------------------------------------------------------------------
-# SECURITY GROUP RULES
-# Superseded by cluster_security_group_additional_rules
-#-------------------------------------------------------------------------------
-
-/*
-resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
-  for_each = toset([
-    module.eks.cluster_security_group_id,
-    module.eks.node_security_group_id
-  ])
-
-  description = "Allow SSH from private CIDRs."
-  type        = "ingress"
-  from_port   = 443
-  to_port     = 443
-  protocol    = "tcp"
-  cidr_blocks = [
-    "10.0.0.0/8",
-    "172.16.0.0/12",
-    "192.168.0.0/16"
-  ]
-  security_group_id = each.value
-
-  depends_on = [
-    module.eks
-  ]
-}
-
-
-resource "aws_security_group_rule" "allow_all_outbound" {
-  for_each = toset([
-    module.eks.cluster_security_group_id,
-    module.eks.node_security_group_id
-  ])
-
-  type              = "egress"
-  to_port           = 0
-  protocol          = "-1"
-  from_port         = 0
-  security_group_id = each.value
-
-  cidr_blocks      = ["0.0.0.0/0"]
-  ipv6_cidr_blocks = ["::/0"]
-
-  depends_on = [
-    module.eks
-  ]
-}
-
-resource "aws_security_group_rule" "allow_all_internal" {
-  for_each = toset([
-    module.eks.cluster_security_group_id,
-    module.eks.node_security_group_id
-  ])
-
-  type              = "ingress"
-  to_port           = 0
-  protocol          = "-1"
-  from_port         = 0
-  security_group_id = each.value
-
-  self = true
-
-  depends_on = [
-    module.eks
-  ]
-}
-*/

@@ -105,17 +105,22 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-
-
 resource "random_string" "suffix" {
   length  = 8
   special = false
 }
 
-
 ##
 #EKS ADDONS
 ##
+
+resource "aws_eks_addon" "addons_coredns" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "coredns"
+  addon_version               = "v1.10.1-eksbuild.1"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "NONE"
+}
 
 resource "aws_eks_addon" "addons" {
   cluster_name                = module.eks.cluster_name

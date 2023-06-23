@@ -51,7 +51,6 @@ module "eks" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
-/*
   cluster_security_group_additional_rules = {
     ingress_cluster_ssh = {
       description = "Allow SSH from private CIDRs."
@@ -83,7 +82,6 @@ module "eks" {
       self        = true
     }
   }
-  */
 
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
@@ -185,3 +183,4 @@ resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
   role       = aws_iam_role.eks_addon_ebs_csi.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
+

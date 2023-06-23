@@ -144,6 +144,41 @@ resource "random_string" "suffix" {
   special = false
 }
 
+
+
+
+#-------------------------------------------------------------------------------
+# IAM RESOURCES FOR EKS ADDONS
+# IAM roles and policies using IRSA to grant k8s services deployed as EKS addons
+# access to AWS resources
+#-------------------------------------------------------------------------------
+
+
+resource "aws_iam_role" "eks_addon_ebs_csi" {
+  name = "cera-${var.circleci_region}-eks-addon-ebs-csi"
+
+  assume_role_policy = templatefile(
+    "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",
+    {
+      aws_account_id           = data.aws_caller_identity.current.account_id,
+      aws_region               = data.aws_region.current.name,
+      oidc_provider_identifier = substr(module.eks.cluster_oidc_issuer_url, -32, -1)
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
+  role       = aws_iam_role.eks_addon_ebs_csi.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_EBS_CSI_DriverRole"
+}
+
+
+
+#-------------------------------------------------------------------------------
+# SECURITY GROUP RULES
+# Superseded by cluster_security_group_additional_rules
+#-------------------------------------------------------------------------------
+
 /*
 resource "aws_security_group_rule" "allow_ssh_from_private_cidrs" {
   for_each = toset([

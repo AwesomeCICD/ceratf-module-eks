@@ -114,6 +114,7 @@ module "eks" {
   ]
 }
 
+/*
 resource "aws_eks_addon" "addons" {
   for_each                    = { for addon in var.addons : addon.name => addon }
   cluster_name                = module.eks.cluster_name
@@ -122,6 +123,7 @@ resource "aws_eks_addon" "addons" {
   resolve_conflicts_on_create = "OVERWRITE"
   resolve_conflicts_on_update = "NONE"
 }
+*/
 
 # For debug use
 
@@ -145,6 +147,18 @@ resource "random_string" "suffix" {
 }
 
 
+##
+#EKS ADDONS
+##
+
+resource "aws_eks_addon" "addons" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "aws-ebs-csi-driver"
+  addon_version               = "v1.19.0-eksbuild.2"
+  service_account_role_arn    = aws_iam_role.eks_addon_ebs_csi.arn
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "NONE"
+}
 
 
 #-------------------------------------------------------------------------------
@@ -155,7 +169,7 @@ resource "random_string" "suffix" {
 
 
 resource "aws_iam_role" "eks_addon_ebs_csi" {
-  name = "cera-${var.circleci_region}-eks-addon-ebs-csi"
+  name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${var.cluster_suffix}-ebs-csi"
 
   assume_role_policy = templatefile(
     "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",

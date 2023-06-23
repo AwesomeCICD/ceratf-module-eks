@@ -83,7 +83,6 @@ module "eks" {
     }
   }
   
-
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
     instance_types                       = [var.node_instance_type]

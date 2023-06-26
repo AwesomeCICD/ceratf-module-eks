@@ -80,17 +80,6 @@ module "eks" {
   ]
 }
 
-/*
-resource "aws_eks_addon" "addons" {
-  for_each                    = { for addon in var.addons : addon.name => addon }
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = each.value.name
-  addon_version               = each.value.version
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "NONE"
-}
-*/
-
 # For debug use
 
 resource "null_resource" "kubeconfig" {
@@ -113,14 +102,6 @@ resource "random_string" "suffix" {
 ##
 #EKS ADDONS
 ##
-
-resource "aws_eks_addon" "addons_coredns" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "coredns"
-  addon_version               = "v1.10.1-eksbuild.1"
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "OVERWRITE"
-}
 
 resource "aws_eks_addon" "addons" {
   cluster_name                = module.eks.cluster_name

@@ -7,9 +7,9 @@ variable "cluster_suffix" {
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
-variable "node_instance_type" {
+variable "node_instance_types" {
   description = "Instance type that will be used in nodegroups."
-  default     = "m5.large"
+  default     = ["m5.large","t4g.xlarge"]
 }
 
 variable "nodegroup_desired_capacity" {

@@ -9,7 +9,7 @@ variable "cluster_suffix" {
 
 variable "node_instance_types" {
   description = "Instance type that will be used in nodegroups."
-  default     = ["m5.xlarge","t3.medium"]
+  default     = ["m5.xlarge", "t3.medium"]
 }
 
 variable "nodegroup_desired_capacity" {

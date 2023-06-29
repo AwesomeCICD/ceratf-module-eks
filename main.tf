@@ -77,7 +77,7 @@ module "eks" {
       launch_template_name            = "${local.derived_cluster_name}-ng-2"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
-      instance_types                  = var.node_instance_types[-1]
+      instance_types                  = reverse(var.node_instance_types)[0]
     }
   ]
 }

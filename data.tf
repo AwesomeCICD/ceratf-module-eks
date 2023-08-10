@@ -4,7 +4,6 @@ data "aws_availability_zones" "available" {}
 
 data "aws_caller_identity" "current" {}
 
-
 locals {
   /*
    * Needs to be trimmed due to AWS 'roleSessionName' throwing a constraint error if OIDC token + cluster name exceeds

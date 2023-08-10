@@ -46,48 +46,14 @@ module "eks" {
   enable_irsa                     = true
   vpc_id                          = module.vpc.vpc_id
   aws_auth_roles                  = local.aws_auth_roles
-  create_aws_auth_configmap       = true
+  create_aws_auth_configmap       = false
   manage_aws_auth_configmap       = true
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
-  /*
-  cluster_security_group_additional_rules = {
-    ingress_cluster_ssh = {
-      description = "Allow SSH from private CIDRs."
-      type        = "ingress"
-      from_port   = 22
-      to_port     = 22
-      protocol    = "tcp"
-      cidr_blocks = [
-        "10.0.0.0/8",
-        "172.16.0.0/12",
-        "192.168.0.0/16"
-      ]
-    },
-    egress_cluster_all = {
-      description      = "Allow all cluster outbound."
-      type             = "egress"
-      to_port          = 0
-      protocol         = "-1"
-      from_port        = 0
-      cidr_blocks      = ["0.0.0.0/0"]
-      ipv6_cidr_blocks = ["::/0"]
-    },
-    ingress_cluster_self = {
-      description = "Allow all traffic within cluster."
-      type        = "ingress"
-      to_port     = 0
-      protocol    = "-1"
-      from_port   = 0
-      self        = true
-    }
-  }
-  */
-
   eks_managed_node_group_defaults = {
     root_volume_type                     = "gp2"
-    instance_type                        = var.node_instance_type
+    instance_types                       = var.node_instance_types
     additional_userdata                  = "echo foo bar"
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
@@ -104,12 +70,14 @@ module "eks" {
       launch_template_name            = "${local.derived_cluster_name}-ng-1"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
+      instance_types                  = [var.node_instance_types[0]]
     },
     {
       name                            = "${local.derived_cluster_name}-ng-2"
       launch_template_name            = "${local.derived_cluster_name}-ng-2"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
+      instance_types                  = [reverse(var.node_instance_types)[0]]
     }
   ]
 }
@@ -128,9 +96,47 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-
-
 resource "random_string" "suffix" {
   length  = 8
   special = false
 }
+
+##
+#EKS ADDONS
+##
+
+resource "aws_eks_addon" "addons" {
+  cluster_name                = module.eks.cluster_name
+  addon_name                  = "aws-ebs-csi-driver"
+  addon_version               = "v1.19.0-eksbuild.1"
+  service_account_role_arn    = aws_iam_role.eks_addon_ebs_csi.arn
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "NONE"
+}
+
+
+#-------------------------------------------------------------------------------
+# IAM RESOURCES FOR EKS ADDONS
+# IAM roles and policies using IRSA to grant k8s services deployed as EKS addons
+# access to AWS resources
+#-------------------------------------------------------------------------------
+
+
+resource "aws_iam_role" "eks_addon_ebs_csi" {
+  name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${var.cluster_suffix}-ebs-csi"
+
+  assume_role_policy = templatefile(
+    "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",
+    {
+      aws_account_id           = data.aws_caller_identity.current.account_id,
+      aws_region               = data.aws_region.current.name,
+      oidc_provider_identifier = substr(module.eks.cluster_oidc_issuer_url, -32, -1)
+    }
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
+  role       = aws_iam_role.eks_addon_ebs_csi.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+

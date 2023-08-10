@@ -66,3 +66,13 @@ variable "aws_profile" {
   description = "Only required if generating a kubeconfig."
   default     = "default"
 }
+
+variable "cluster_endpoint_public_access" {
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
+  default     = false #TF default, not AWS default
+}
+
+variable "cluster_endpoint_private_access" {
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
+  default     = true #TF default, not AWS default
+}

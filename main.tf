@@ -8,7 +8,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
 
-  name                 = "${local.derived_cluster_name}-vpc"
+  name                 = "${local.computed_cluster_name}-vpc"
   cidr                 = "10.0.0.0/16"
   azs                  = data.aws_availability_zones.available.names
   private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -20,17 +20,17 @@ module "vpc" {
   manage_default_network_acl = false #added to avoid bug in v5.0.0
 
   tags = {
-    "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
+    "kubernetes.io/cluster/${local.computed_cluster_name}" = "shared"
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                              = "1"
+    "kubernetes.io/cluster/${local.computed_cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                               = "1"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"                     = "1"
+    "kubernetes.io/cluster/${local.computed_cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"                      = "1"
   }
 }
 
@@ -38,7 +38,7 @@ module "vpc" {
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "19.15.3"
-  cluster_name    = local.derived_cluster_name
+  cluster_name    = local.computed_cluster_name
   cluster_version = var.cluster_version
   subnet_ids      = module.vpc.private_subnets
   # The OIDC provider for EKS cluster access via SSO is created in the global infra TF plan
@@ -66,15 +66,15 @@ module "eks" {
 
   eks_managed_node_groups = [
     {
-      name                            = "${local.derived_cluster_name}-ng-1"
-      launch_template_name            = "${local.derived_cluster_name}-ng-1"
+      name                            = "${local.computed_cluster_name}-ng-1"
+      launch_template_name            = "${local.computed_cluster_name}-ng-1"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
       instance_types                  = [var.node_instance_types[0]]
     },
     {
-      name                            = "${local.derived_cluster_name}-ng-2"
-      launch_template_name            = "${local.derived_cluster_name}-ng-2"
+      name                            = "${local.computed_cluster_name}-ng-2"
+      launch_template_name            = "${local.computed_cluster_name}-ng-2"
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
       instance_types                  = [reverse(var.node_instance_types)[0]]
@@ -96,9 +96,10 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-resource "random_string" "suffix" {
-  length  = 8
+resource "random_string" "random_suffix" {
+  length  = 6
   special = false
+  upper   = false
 }
 
 ##
@@ -123,7 +124,7 @@ resource "aws_eks_addon" "addons" {
 
 
 resource "aws_iam_role" "eks_addon_ebs_csi" {
-  name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${var.cluster_suffix}-ebs-csi"
+  name = "${local.computed_cluster_name}-ebs-csi"
 
   assume_role_policy = templatefile(
     "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",

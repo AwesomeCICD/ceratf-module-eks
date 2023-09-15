@@ -7,9 +7,9 @@ data "aws_caller_identity" "current" {}
 locals {
   /*
    * Needs to be trimmed due to AWS 'roleSessionName' throwing a constraint error if OIDC token + cluster name exceeds
-   * 64 characters. Trimmed length of 32=37-5(for 'cera-' prefix)
+   * 64 characters. Trimmed length of 23=37-5(for 'cera-' prefix)-7(random string)
    */
-  derived_cluster_name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${format("%.24s", var.cluster_suffix)}-${random_string.random_suffix.result}"
+  computed_cluster_name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${format("%.24s", var.cluster_suffix)}-${random_string.random_suffix.result}"
 
   # Maps the SSO role plus any additional specified roles to the system:masters group
   aws_auth_roles = concat(

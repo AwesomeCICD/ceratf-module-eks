@@ -21,6 +21,10 @@ module "vpc" {
 
   tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
+    owner                                                 = "solutions@circleci.com"
+    team                                                  = "Solutions Engineering"
+    critical-resource                                     = "critical-until-2024-02-01"
+    purpose                                               = "CERA is a customer facing demo architecture used by Solutions Engineering team."
   }
 
   public_subnet_tags = {
@@ -58,8 +62,10 @@ module "eks" {
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
     tags = {
-      owner = "solutions@circleci.com"
-      team  = "Solutions Engineering"
+      owner             = "solutions@circleci.com"
+      team              = "Solutions Engineering"
+      critical-resource = "critical-until-2024-02-01"
+      purpose           = "CERA is a customer facing demo architecture used by Solutions Engineering team."
     }
 
   }
@@ -71,13 +77,6 @@ module "eks" {
       launch_template_use_name_prefix = false #workaround for bug in 18.30.2
       iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
       instance_types                  = [var.node_instance_types[0]]
-    },
-    {
-      name                            = "${local.derived_cluster_name}-ng-2"
-      launch_template_name            = "${local.derived_cluster_name}-ng-2"
-      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
-      iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
-      instance_types                  = [reverse(var.node_instance_types)[0]]
     }
   ]
 }

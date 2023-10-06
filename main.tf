@@ -79,6 +79,13 @@ module "eks" {
       instance_types                  = [var.node_instance_types[0]]
     }
   ]
+
+   tags = {
+      owner             = "solutions@circleci.com"
+      team              = "Solutions Engineering"
+      critical-resource = "critical-until-2024-02-01"
+      purpose           = "CERA is a customer facing demo architecture used by Solutions Engineering team."
+    }
 }
 
 # For debug use

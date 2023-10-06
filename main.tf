@@ -88,6 +88,20 @@ module "eks" {
   }
 }
 
+#using managed node groups creates a big of a work around need for us to tag the ASGs themselvbes (not the nodes or nodegroup)
+resource "aws_autoscaling_group_tag" "cera_asg_tags" {
+  for_each =  toset( module.eks.eks_managed_node_groups_autoscaling_group_names) 
+
+  autoscaling_group_name = each.value
+
+  tag {
+    key   = "critical-resource"
+    value = "critical-until-2024-02-01"
+    propagate_at_launch = false
+  }
+}
+
+
 # For debug use
 
 resource "null_resource" "kubeconfig" {

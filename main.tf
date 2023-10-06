@@ -93,18 +93,18 @@ resource "aws_autoscaling_group_tag" "cera_asg_tag_critical" {
   autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
 
   tag {
-    key   = "critical-resource"
-    value = "critical-until-2024-02-01"
+    key                 = "critical-resource"
+    value               = "critical-until-2024-02-01"
     propagate_at_launch = false
   }
-  depends_on = [ module.eks ]
+  depends_on = [module.eks]
 }
 resource "aws_autoscaling_group_tag" "cera_asg_tag_owner" {
   autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
 
   tag {
-    key   = "owner"
-    value = "solutions@circleci.com"
+    key                 = "owner"
+    value               = "solutions@circleci.com"
     propagate_at_launch = false
   }
 }

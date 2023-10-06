@@ -89,7 +89,7 @@ module "eks" {
 }
 
 #using managed node groups creates a big of a work around need for us to tag the ASGs themselvbes (not the nodes or nodegroup)
-resource "aws_autoscaling_group_tag" "cera_asg_tags" {
+resource "aws_autoscaling_group_tag" "cera_asg_tag_critical" {
   for_each =  toset( module.eks.eks_managed_node_groups_autoscaling_group_names) 
 
   autoscaling_group_name = each.value
@@ -97,6 +97,17 @@ resource "aws_autoscaling_group_tag" "cera_asg_tags" {
   tag {
     key   = "critical-resource"
     value = "critical-until-2024-02-01"
+    propagate_at_launch = false
+  }
+}
+resource "aws_autoscaling_group_tag" "cera_asg_tag_owner" {
+  for_each =  toset( module.eks.eks_managed_node_groups_autoscaling_group_names) 
+
+  autoscaling_group_name = each.value
+
+  tag {
+    key   = "owner"
+    value = "solutions@circleci.com"
     propagate_at_launch = false
   }
 }

@@ -19,13 +19,18 @@ module "vpc" {
 
   manage_default_network_acl = false #added to avoid bug in v5.0.0
 
-  tags = {
+
+  tags = merge(var.default_fieldeng_tags, {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-    owner                                                 = "solutions@circleci.com"
-    team                                                  = "Solutions Engineering"
-    critical-resource                                     = "critical-until-2024-02-01"
-    purpose                                               = "CERA is a customer facing demo architecture used by Solutions Engineering team."
-  }
+  })
+
+  #tags = {
+  #  "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
+  #  owner                                                 = "field@circleci.com"
+  #  team                                                  = "Solutions Engineering"
+  #  critical-resource                                     = "critical-until-2024-02-01"
+  #  purpose                                               = "CERA is a customer facing demo architecture used by Solutions Engineering team."
+  #}
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
@@ -61,12 +66,7 @@ module "eks" {
     additional_userdata                  = "echo foo bar"
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
-    tags = {
-      owner             = "solutions@circleci.com"
-      team              = "Solutions Engineering"
-      critical-resource = "critical-until-2024-02-01"
-      purpose           = "CERA is a customer facing demo architecture used by Solutions Engineering team."
-    }
+    tags = var.default_fieldeng_tags
 
   }
 
@@ -80,12 +80,7 @@ module "eks" {
     }
   ]
 
-  tags = {
-    owner             = "solutions@circleci.com"
-    team              = "Solutions Engineering"
-    critical-resource = "critical-until-2024-02-01"
-    purpose           = "CERA is a customer facing demo architecture used by Solutions Engineering team."
-  }
+  tags = var.default_fieldeng_tags
 }
 
 #using managed node groups creates a big of a work around need for us to tag the ASGs themselvbes (not the nodes or nodegroup)
@@ -94,7 +89,7 @@ resource "aws_autoscaling_group_tag" "cera_asg_tag_critical" {
 
   tag {
     key                 = "critical-resource"
-    value               = "critical-until-2024-02-01"
+    value               = "critical-until-2024-07-31"
     propagate_at_launch = false
   }
   depends_on = [module.eks]
@@ -104,7 +99,7 @@ resource "aws_autoscaling_group_tag" "cera_asg_tag_owner" {
 
   tag {
     key                 = "owner"
-    value               = "solutions@circleci.com"
+    value               = "field@circleci.com"
     propagate_at_launch = false
   }
 }

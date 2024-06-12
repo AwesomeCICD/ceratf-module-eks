@@ -76,3 +76,19 @@ variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
   default     = true #TF default, not AWS default
 }
+
+
+# Tags are set based on the definitions defined in the Confluence link below
+# https://circleci.atlassian.net/wiki/spaces/CE1/pages/6968705224/Infrastructure+Tags+and+Labels
+variable "default_fieldeng_tags" {
+  type = map(string)
+  default = {
+    "cost_center"    = "mixed"
+    "owner"          = "field@circleci.com"
+    "team"           = "Field Engineering"
+    "iac"            = "true"
+    "opt_in"         = "true"
+    "critical_until" = "critical-until-2024-07-31"
+    "purpose"        = "CERA is a customer facing demo architecture used by Solutions Engineering team."
+  }
+}

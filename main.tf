@@ -19,18 +19,9 @@ module "vpc" {
 
   manage_default_network_acl = false #added to avoid bug in v5.0.0
 
-
   tags = merge(var.default_fieldeng_tags, {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
   })
-
-  #tags = {
-  #  "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"
-  #  owner                                                 = "field@circleci.com"
-  #  team                                                  = "Solutions Engineering"
-  #  critical-resource                                     = "critical-until-2024-02-01"
-  #  purpose                                               = "CERA is a customer facing demo architecture used by Solutions Engineering team."
-  #}
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.derived_cluster_name}" = "shared"

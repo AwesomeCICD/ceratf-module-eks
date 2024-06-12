@@ -66,7 +66,7 @@ module "eks" {
     additional_userdata                  = "echo foo bar"
     desired_size                         = var.nodegroup_desired_capacity
     metadata_http_put_response_hop_limit = 2 #enable IMDSv2
-    tags = var.default_fieldeng_tags
+    tags                                 = var.default_fieldeng_tags
 
   }
 

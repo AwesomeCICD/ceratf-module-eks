@@ -6,6 +6,9 @@ orbs:
   semver: cci-labs/semver@0.0.3
 
 parameters:
+  tf-version:
+    type: string
+    default: "1.8.2"
   oidc_test_role_arn:
     type: string
     default: "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
@@ -37,7 +40,7 @@ jobs:
             - .
 
   tf-validate:
-    executor: terraform/default
+    executor: hashicorp/terraform:<< parameters.tf-version >>
     steps:
       - attach_workspace:
           at: .

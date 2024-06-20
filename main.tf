@@ -74,27 +74,6 @@ module "eks" {
   tags = var.default_fieldeng_tags
 }
 
-#using managed node groups creates a big of a work around need for us to tag the ASGs themselvbes (not the nodes or nodegroup)
-resource "aws_autoscaling_group_tag" "cera_asg_tag_critical" {
-  autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
-
-  tag {
-    key                 = "critical-resource"
-    value               = "critical-until-2024-07-31"
-    propagate_at_launch = false
-  }
-  depends_on = [module.eks]
-}
-resource "aws_autoscaling_group_tag" "cera_asg_tag_owner" {
-  autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
-
-  tag {
-    key                 = "owner"
-    value               = "field@circleci.com"
-    propagate_at_launch = false
-  }
-}
-
 
 # For debug use
 
@@ -115,42 +94,4 @@ resource "random_string" "suffix" {
   special = false
 }
 
-##
-#EKS ADDONS
-##
-
-resource "aws_eks_addon" "addons" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "aws-ebs-csi-driver"
-  addon_version               = "v1.19.0-eksbuild.1"
-  service_account_role_arn    = aws_iam_role.eks_addon_ebs_csi.arn
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "NONE"
-}
-
-
-#-------------------------------------------------------------------------------
-# IAM RESOURCES FOR EKS ADDONS
-# IAM roles and policies using IRSA to grant k8s services deployed as EKS addons
-# access to AWS resources
-#-------------------------------------------------------------------------------
-
-
-resource "aws_iam_role" "eks_addon_ebs_csi" {
-  name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${var.cluster_suffix}-ebs-csi"
-
-  assume_role_policy = templatefile(
-    "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",
-    {
-      aws_account_id           = data.aws_caller_identity.current.account_id,
-      aws_region               = data.aws_region.current.name,
-      oidc_provider_identifier = substr(module.eks.cluster_oidc_issuer_url, -32, -1)
-    }
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
-  role       = aws_iam_role.eks_addon_ebs_csi.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
 

@@ -49,21 +49,14 @@ module "eks" {
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
   eks_managed_node_group_defaults = {
-    root_volume_type                     = "gp2"
     instance_types                       = var.node_instance_types
-    additional_userdata                  = "echo foo bar"
-    desired_size                         = var.nodegroup_desired_capacity
-    metadata_http_put_response_hop_limit = 2 #enable IMDSv2
     tags                                 = var.default_fieldeng_tags
-
   }
 
   eks_managed_node_groups = [
     {
       name                            = "${local.derived_cluster_name}-ng-1"
-      launch_template_name            = "${local.derived_cluster_name}-ng-1"
-      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
-      iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
+      desired_size                    = var.nodegroup_desired_capacity
       instance_types                  = [var.node_instance_types[0]]
     }
   ]

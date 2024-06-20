@@ -1,6 +1,6 @@
 variable "cluster_version" {
   description = "Cluster version"
-  default     = 1.22
+  default     = 1.30
 }
 
 variable "cluster_suffix" {

@@ -94,6 +94,29 @@ module "eks" {
     }
   ]
 
+access_entries = {
+
+    fieldeng_eks_access = {
+      principal_arn = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+      policy_associations = {
+        admin_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        namespace_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type       = "namespace"
+            namespaces = ["default", "kube-system", "*"]
+          }
+        }
+      }
+    }
+
   tags = var.default_fieldeng_tags
 }
 

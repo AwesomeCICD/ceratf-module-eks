@@ -40,7 +40,8 @@ jobs:
             - .
 
   tf-validate:
-    executor: hashicorp/terraform:<< pipeline.parameters.tf-version >>
+    docker:
+      - image: hashicorp/terraform:<< pipeline.parameters.tf-version >>
     steps:
       - attach_workspace:
           at: .

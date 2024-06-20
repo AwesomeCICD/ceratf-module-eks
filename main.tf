@@ -37,7 +37,7 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "19.15.3"
+  version         = "20.14.0"
   cluster_name    = local.derived_cluster_name
   cluster_version = var.cluster_version
   subnet_ids      = module.vpc.private_subnets
@@ -47,6 +47,21 @@ module "eks" {
   vpc_id                          = module.vpc.vpc_id
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
+
+  cluster_addons = {
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+  }
 
   eks_managed_node_group_defaults = {
     instance_types = var.node_instance_types
@@ -58,6 +73,24 @@ module "eks" {
       name           = "${local.derived_cluster_name}-ng-1"
       desired_size   = var.nodegroup_desired_capacity
       instance_types = [var.node_instance_types[0]]
+
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = "50"
+            volume_type           = "gp2"
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
+
+      metadata_options = {
+        http_endpoint = "enabled"
+      }
+
+
     }
   ]
 

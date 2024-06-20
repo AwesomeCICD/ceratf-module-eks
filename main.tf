@@ -49,15 +49,15 @@ module "eks" {
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
   eks_managed_node_group_defaults = {
-    instance_types                       = var.node_instance_types
-    tags                                 = var.default_fieldeng_tags
+    instance_types = var.node_instance_types
+    tags           = var.default_fieldeng_tags
   }
 
   eks_managed_node_groups = [
     {
-      name                            = "${local.derived_cluster_name}-ng-1"
-      desired_size                    = var.nodegroup_desired_capacity
-      instance_types                  = [var.node_instance_types[0]]
+      name           = "${local.derived_cluster_name}-ng-1"
+      desired_size   = var.nodegroup_desired_capacity
+      instance_types = [var.node_instance_types[0]]
     }
   ]
 

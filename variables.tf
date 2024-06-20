@@ -7,9 +7,13 @@ variable "cluster_suffix" {
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
+# Refer to the AWS EC2 On-Demand Pricing page for more details:
+# https://aws.amazon.com/ec2/pricing/on-demand/
+# We have selected m5a and t3a instance types because they are 10% cheaper 
+# than their standard counterparts and are better suited for our use case.
 variable "node_instance_types" {
-  description = "Instance type that will be used in nodegroups."
-  default     = ["m5.xlarge", "t3.medium"]
+  description = "Instance types to be used in node groups."
+  default     = ["m5a.xlarge", "t3a.medium"]
 }
 
 variable "nodegroup_desired_capacity" {

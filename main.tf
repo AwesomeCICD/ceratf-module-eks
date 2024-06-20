@@ -45,7 +45,6 @@ module "eks" {
   # enable_irsa creates a separate OIDC provider used solely for IRSA (IAM Roles for K8s Service Accounts)
   enable_irsa                     = true
   vpc_id                          = module.vpc.vpc_id
-  aws_auth_roles                  = local.aws_auth_roles
   create_aws_auth_configmap       = false
   manage_aws_auth_configmap       = true
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access

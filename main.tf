@@ -100,7 +100,7 @@ module "eks" {
       metadata_options = {
         http_endpoint               = "enabled"
         http_tokens                 = "required"
-        http_put_response_hop_limit = 2
+        http_put_response_hop_limit = 10
         instance_metadata_tags      = "enabled"
       }
 
@@ -161,7 +161,7 @@ resource "kubernetes_storage_class" "expandable" {
   metadata {
     name = "expandable-gp2"
   }
-  storage_provisioner    = "ebs.csi.aws.com"
+  storage_provisioner    = "kubernetes.io/aws-ebs"
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
   allow_volume_expansion = "true"

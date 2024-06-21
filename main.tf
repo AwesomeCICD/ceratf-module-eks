@@ -74,6 +74,7 @@ module "eks" {
       launch_template_name = "${local.derived_cluster_name}-launch-template"
       desired_size         = var.nodegroup_desired_capacity
       instance_types       = [var.node_instance_types[0]]
+      force_update_version = true
       # The role created by the Terraform module already has the cluster-specific attributes
       # Setting this to false ensures that the name_prefix conforms to the limits set by AWS
       iam_role_use_name_prefix = false

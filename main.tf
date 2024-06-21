@@ -78,7 +78,8 @@ module "eks" {
       # The role created by the Terraform module already has the cluster-specific attributes
       # Setting this to false ensures that the name_prefix conforms to the limits set by AWS
       iam_role_use_name_prefix = false
-
+      # Add additional EBS CSI Driver Policy to the Nodegroup IAM role
+      # https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonEBSCSIDriverPolicy.html
       iam_role_additional_policies = {
         AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
       }
@@ -95,6 +96,7 @@ module "eks" {
         }
       }
 
+      ## Explicitly set Instance Metadata Options for Nodegroup EC2 instances
       metadata_options = {
         http_endpoint               = "enabled"
         http_tokens                 = "required"

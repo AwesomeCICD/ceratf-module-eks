@@ -5,6 +5,14 @@ orbs:
   aws-cli: circleci/aws-cli@3.1.3
   semver: cci-labs/semver@0.0.3
 
+parameters:
+  tf-version:
+    type: string
+    default: "1.8.2"
+  oidc_test_role_arn:
+    type: string
+    default: "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+  
 jobs:
   setup-oidc-and-test-files:
     parameters:
@@ -20,7 +28,7 @@ jobs:
       - aws-cli/install
       - aws-cli/assume-role-with-web-identity:
           profile-name: << parameters.aws_profile >>
-          role-arn: "arn:aws:iam::483285841698:role/SolutionsEngineeringEKS" #"<< parameters.oidc_test_role_arn >>" 
+          role-arn: << pipeline.parameters.oidc_test_role_arn >>
           role-session-name: "cci-ceratf-module-eks-<< pipeline.number >>"
           session-duration: "3600"
       - jinja/render:
@@ -32,7 +40,8 @@ jobs:
             - .
 
   tf-validate:
-    executor: terraform/default
+    docker:
+      - image: hashicorp/terraform:<< pipeline.parameters.tf-version >>
     steps:
       - attach_workspace:
           at: .

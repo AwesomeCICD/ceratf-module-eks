@@ -37,7 +37,7 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "19.15.3"
+  version         = "~> 20.0"
   cluster_name    = local.derived_cluster_name
   cluster_version = var.cluster_version
   subnet_ids      = module.vpc.private_subnets
@@ -45,54 +45,87 @@ module "eks" {
   # enable_irsa creates a separate OIDC provider used solely for IRSA (IAM Roles for K8s Service Accounts)
   enable_irsa                     = true
   vpc_id                          = module.vpc.vpc_id
-  aws_auth_roles                  = local.aws_auth_roles
-  create_aws_auth_configmap       = false
-  manage_aws_auth_configmap       = true
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
+  cluster_addons = {
+    coredns = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+  }
+
   eks_managed_node_group_defaults = {
-    root_volume_type                     = "gp2"
-    instance_types                       = var.node_instance_types
-    additional_userdata                  = "echo foo bar"
-    desired_size                         = var.nodegroup_desired_capacity
-    metadata_http_put_response_hop_limit = 2 #enable IMDSv2
-    tags                                 = var.default_fieldeng_tags
+    instance_types = var.node_instance_types
+    tags           = var.default_fieldeng_tags
   }
 
   eks_managed_node_groups = [
     {
-      name                            = "${local.derived_cluster_name}-ng-1"
-      launch_template_name            = "${local.derived_cluster_name}-ng-1"
-      launch_template_use_name_prefix = false #workaround for bug in 18.30.2
-      iam_role_use_name_prefix        = false #workaround for bug in 18.30.2
-      instance_types                  = [var.node_instance_types[0]]
+      name                 = "${local.derived_cluster_name}-ng-1"
+      launch_template_name = "${local.derived_cluster_name}-launch-template"
+      desired_size         = var.nodegroup_desired_capacity
+      instance_types       = [var.node_instance_types[0]]
+      force_update_version = true
+      # The role created by the Terraform module already has the cluster-specific attributes
+      # Setting this to false ensures that the name_prefix conforms to the limits set by AWS
+      iam_role_use_name_prefix = false
+
+      block_device_mappings = {
+        xvda = {
+          device_name = "/dev/xvda"
+          ebs = {
+            volume_size           = "50"
+            volume_type           = "gp2"
+            encrypted             = false
+            delete_on_termination = true
+          }
+        }
+      }
+
+      metadata_options = {
+        http_endpoint = "enabled"
+      }
+
+
     }
   ]
+
+  access_entries = {
+
+    fieldeng_eks_access = {
+      principal_arn = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+      policy_associations = {
+        admin_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        namespace_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type       = "namespace"
+            namespaces = ["default", "kube-system", "*"]
+          }
+        }
+      }
+    }
+  }
 
   tags = var.default_fieldeng_tags
 }
 
-#using managed node groups creates a big of a work around need for us to tag the ASGs themselvbes (not the nodes or nodegroup)
-resource "aws_autoscaling_group_tag" "cera_asg_tag_critical" {
-  autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
-
-  tag {
-    key                 = "critical-resource"
-    value               = "critical-until-2024-07-31"
-    propagate_at_launch = false
-  }
-  depends_on = [module.eks]
-}
-resource "aws_autoscaling_group_tag" "cera_asg_tag_owner" {
-  autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[0]
-
-  tag {
-    key                 = "owner"
-    value               = "field@circleci.com"
-    propagate_at_launch = false
-  }
-}
 
 
 # For debug use
@@ -114,42 +147,4 @@ resource "random_string" "suffix" {
   special = false
 }
 
-##
-#EKS ADDONS
-##
-
-resource "aws_eks_addon" "addons" {
-  cluster_name                = module.eks.cluster_name
-  addon_name                  = "aws-ebs-csi-driver"
-  addon_version               = "v1.19.0-eksbuild.1"
-  service_account_role_arn    = aws_iam_role.eks_addon_ebs_csi.arn
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "NONE"
-}
-
-
-#-------------------------------------------------------------------------------
-# IAM RESOURCES FOR EKS ADDONS
-# IAM roles and policies using IRSA to grant k8s services deployed as EKS addons
-# access to AWS resources
-#-------------------------------------------------------------------------------
-
-
-resource "aws_iam_role" "eks_addon_ebs_csi" {
-  name = "cera-${lookup(var.region_short_name_table, data.aws_region.current.name)}-${var.cluster_suffix}-ebs-csi"
-
-  assume_role_policy = templatefile(
-    "${path.module}/templates/ebs_csi_role_trust_policy.json.tpl",
-    {
-      aws_account_id           = data.aws_caller_identity.current.account_id,
-      aws_region               = data.aws_region.current.name,
-      oidc_provider_identifier = substr(module.eks.cluster_oidc_issuer_url, -32, -1)
-    }
-  )
-}
-
-resource "aws_iam_role_policy_attachment" "eks_addon_ebs_csi" {
-  role       = aws_iam_role.eks_addon_ebs_csi.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
 

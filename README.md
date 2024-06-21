@@ -1,12 +1,11 @@
 # ceratf-module-eks
-Terraform module for deploying regional SE EKS clusters.  Does the following:
+Terraform module for deploying regional Field Engineering EKS clusters.  Does the following:
 - Deploys a VPC
 - Deploys an EKS cluster in the VPC
-- Update the aws-auth config map to grant `system:masters` access to the SE EKS role stored in the ceratf-deployment-global plan state as well as any additional IAM roles
 
 ## Requirements
 
-- Terraform >= 1.0.9
+- Terraform >= 1.5.0
 - aws-cli >= 2.8.3
 - Access to state file from ceratf-deployment-global plan
 
@@ -29,11 +28,9 @@ Terraform module for deploying regional SE EKS clusters.  Does the following:
 
 | Name | Default | Description|
 |------|---------|------------|
-|cluster_version | `1.22` | Desired EKS cluster version.|
+|cluster_version | `1.30` | Desired EKS cluster version.|
 |node_instance_type|`m5.large`|EC2 instance type to be used by nodegroups.|
 |nodegroup_desired_capacity|`2`|Desired number of instances per nodegroup.|
-|eks_access_iam_role_name|`""`|IAM role to be used globally by SEs for cluster access. Will added to the system:masters group in the EKS cluster.|
-|additional_iam_role_names|`[]`|Additional IAM roles to be added to the system:masters group in the EKS cluster.|
 |generate_kubeconfig| `false` | Whether or not to generate a local kubeconfig file for troubleshooting. |
 |aws_profile| `default` | AWS profile used for generating kubeconfig. |
 | cluster_endpoint_public_access | false | Indicates whether or not the Amazon EKS public API server endpoint is enabled |
@@ -60,7 +57,7 @@ module "se_eks_cluster" {
   source = "git@github.com:AwesomeCICD/ceratf-module-eks.git"
 
   cluster_suffix             = "foobar"
-  cluster_version            = "1.22"
+  cluster_version            = "1.30"
   node_instance_type         = "m5.large"
   nodegroup_desired_capacity = "2"
 }

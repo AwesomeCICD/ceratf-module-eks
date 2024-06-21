@@ -9,9 +9,6 @@ parameters:
   tf-version:
     type: string
     default: "1.8.2"
-  oidc_test_role_arn:
-    type: string
-    default: "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
   
 jobs:
   setup-oidc-and-test-files:

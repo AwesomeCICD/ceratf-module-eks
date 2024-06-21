@@ -20,9 +20,9 @@ variable "node_instance_types" {
 }
 
 variable "nodegroup_desired_capacity" {
+  type        = number
   description = "Desired capacity of each nodegroup."
   default     = 2
-  type        = number
 }
 
 variable "region_short_name_table" {
@@ -55,27 +55,31 @@ variable "region_short_name_table" {
 }
 
 variable "generate_kubeconfig" {
+  type        = bool
   description = "Set to true to generate a kubeconfig locally for debug/testing."
   default     = false
-  type        = bool
+
 }
 
 variable "aws_profile" {
+  type        = string
   description = "Only required if generating a kubeconfig."
   default     = "default"
-  type        = string
+
 }
 
 variable "cluster_endpoint_public_access" {
+  type        = bool
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
   default     = false #TF default, not AWS default
-  type        = bool
+
 }
 
 variable "cluster_endpoint_private_access" {
+  type        = bool
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
   default     = true #TF default, not AWS default
-  type        = bool
+
 }
 
 

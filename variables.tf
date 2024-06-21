@@ -1,9 +1,11 @@
 variable "cluster_version" {
+  type        = string
   description = "Cluster version"
-  default     = 1.30
+  default     = "1.30"
 }
 
 variable "cluster_suffix" {
+  type        = string
   description = "Name for eks cluster, prefix is 'cera-'"
 }
 
@@ -12,6 +14,7 @@ variable "cluster_suffix" {
 # We have selected m5a and t3a instance types because they are 10% cheaper 
 # than their standard counterparts and are better suited for our use case.
 variable "node_instance_types" {
+  type        = list(string)
   description = "Instance types to be used in node groups."
   default     = ["m5a.xlarge", "t3a.medium"]
 }
@@ -19,6 +22,7 @@ variable "node_instance_types" {
 variable "nodegroup_desired_capacity" {
   description = "Desired capacity of each nodegroup."
   default     = 2
+  type        = number
 }
 
 variable "eks_access_iam_role_name" {
@@ -64,21 +68,25 @@ variable "region_short_name_table" {
 variable "generate_kubeconfig" {
   description = "Set to true to generate a kubeconfig locally for debug/testing."
   default     = false
+  type        = boolean
 }
 
 variable "aws_profile" {
   description = "Only required if generating a kubeconfig."
   default     = "default"
+  type        = string
 }
 
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
   default     = false #TF default, not AWS default
+  type        = boolean
 }
 
 variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
   default     = true #TF default, not AWS default
+  type        = boolean
 }
 
 

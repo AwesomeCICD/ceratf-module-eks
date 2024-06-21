@@ -37,7 +37,7 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "20.14.0"
+  version         = "~> 20.0"
   cluster_name    = local.derived_cluster_name
   cluster_version = var.cluster_version
   subnet_ids      = module.vpc.private_subnets
@@ -94,7 +94,7 @@ module "eks" {
     }
   ]
 
-access_entries = {
+  access_entries = {
 
     fieldeng_eks_access = {
       principal_arn = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
@@ -116,9 +116,11 @@ access_entries = {
         }
       }
     }
+  }
 
   tags = var.default_fieldeng_tags
 }
+
 
 
 # For debug use

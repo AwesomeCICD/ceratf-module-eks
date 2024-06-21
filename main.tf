@@ -168,5 +168,5 @@ resource "kubernetes_storage_class" "expandable" {
   parameters = {
     type = "gp2"
   }
-  depends_on = [ module.eks ]
+  depends_on = [module.eks]
 }

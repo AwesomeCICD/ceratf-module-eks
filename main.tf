@@ -157,3 +157,16 @@ resource "random_string" "suffix" {
 }
 
 
+resource "kubernetes_storage_class" "expandable" {
+  metadata {
+    name = "expandable-gp2"
+  }
+  storage_provisioner    = "ebs.csi.aws.com"
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = "true"
+  parameters = {
+    type = "gp2"
+  }
+  depends_on = [ module.eks ]
+}

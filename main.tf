@@ -79,6 +79,10 @@ module "eks" {
       # Setting this to false ensures that the name_prefix conforms to the limits set by AWS
       iam_role_use_name_prefix = false
 
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+      }
+
       block_device_mappings = {
         xvda = {
           device_name = "/dev/xvda"
@@ -92,7 +96,10 @@ module "eks" {
       }
 
       metadata_options = {
-        http_endpoint = "enabled"
+        http_endpoint               = "enabled"
+        http_tokens                 = "required"
+        http_put_response_hop_limit = 2
+        instance_metadata_tags      = "enabled"
       }
 
 
@@ -145,6 +152,21 @@ resource "null_resource" "kubeconfig" {
 resource "random_string" "suffix" {
   length  = 8
   special = false
+}
+
+
+resource "kubernetes_storage_class" "expandable" {
+  metadata {
+    name = "expandable-gp2"
+  }
+  storage_provisioner    = "ebs.csi.aws.com"
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = "true"
+  parameters = {
+    type = "gp2"
+  }
+  depends_on = [module.eks]
 }
 
 

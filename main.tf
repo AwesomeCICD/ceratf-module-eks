@@ -70,9 +70,13 @@ module "eks" {
 
   eks_managed_node_groups = [
     {
-      name           = "${local.derived_cluster_name}-ng-1"
-      desired_size   = var.nodegroup_desired_capacity
-      instance_types = [var.node_instance_types[0]]
+      name                 = "${local.derived_cluster_name}-ng-1"
+      launch_template_name = "${local.derived_cluster_name}-launch-template"
+      desired_size         = var.nodegroup_desired_capacity
+      instance_types       = [var.node_instance_types[0]]
+      # The role created by the Terraform module already has the cluster-specific attributes
+      # Setting this to false ensures that the name_prefix conforms to the limits set by AWS
+      iam_role_use_name_prefix = false
 
       block_device_mappings = {
         xvda = {

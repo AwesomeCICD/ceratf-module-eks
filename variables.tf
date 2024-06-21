@@ -68,7 +68,7 @@ variable "region_short_name_table" {
 variable "generate_kubeconfig" {
   description = "Set to true to generate a kubeconfig locally for debug/testing."
   default     = false
-  type        = boolean
+  type        = bool
 }
 
 variable "aws_profile" {
@@ -80,13 +80,13 @@ variable "aws_profile" {
 variable "cluster_endpoint_public_access" {
   description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
   default     = false #TF default, not AWS default
-  type        = boolean
+  type        = bool
 }
 
 variable "cluster_endpoint_private_access" {
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"
   default     = true #TF default, not AWS default
-  type        = boolean
+  type        = bool
 }
 
 

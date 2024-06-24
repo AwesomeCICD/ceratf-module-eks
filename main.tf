@@ -160,6 +160,9 @@ resource "random_string" "suffix" {
 resource "kubernetes_storage_class" "expandable" {
   metadata {
     name = "expandable-gp2"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
   }
   storage_provisioner    = "kubernetes.io/aws-ebs"
   reclaim_policy         = "Delete"

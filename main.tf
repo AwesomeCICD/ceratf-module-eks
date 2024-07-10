@@ -50,16 +50,16 @@ module "eks" {
 
   cluster_addons = {
     coredns = {
-      most_recent = true
+      addon_version = "v1.11.1-eksbuild.9"
     }
     kube-proxy = {
-      most_recent = true
+      addon_version = "v1.30.0-eksbuild.3"
     }
     vpc-cni = {
-      most_recent = true
+      addon_version = "v1.18.2-eksbuild.1"
     }
     aws-ebs-csi-driver = {
-      most_recent = true
+      addon_version = "v1.31.0-eksbuild.1"
     }
   }
 

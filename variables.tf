@@ -97,3 +97,8 @@ variable "default_fieldeng_tags" {
     "purpose"        = "CERA is a customer facing demo architecture used by Solutions Engineering team."
   }
 }
+
+variable "principal_arn" {
+  type    = string
+  default = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+}

@@ -111,7 +111,7 @@ module "eks" {
   access_entries = {
 
     fieldeng_eks_access = {
-      principal_arn = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+      principal_arn = var.principal_arn
       policy_associations = {
         admin_policy = {
           ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html

@@ -98,7 +98,8 @@ variable "default_fieldeng_tags" {
   }
 }
 
+# attached ass trust on EKS role for admin access
 variable "principal_arn" {
-  type    = string
-  default = "arn:aws:iam::992382483259:role/FieldEngineeringEKS"
+  type        = string
+  description = "WHat role will be allowed cluster admin access via kubectl?"
 }

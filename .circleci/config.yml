@@ -71,8 +71,5 @@ workflows:
                   git tag ${MAJOR}.${MINOR}.${PATCH}
                   git push --tags
           requires: [Validate Terraform Plan]
-          filters:
-            branches:
-              only: [main]
 
 # VS Code Extension Version: 1.4.0

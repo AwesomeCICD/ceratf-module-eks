@@ -85,17 +85,9 @@ variable "cluster_endpoint_private_access" {
 
 # Tags are set based on the definitions defined in the Confluence link below
 # https://circleci.atlassian.net/wiki/spaces/CE1/pages/6968705224/Infrastructure+Tags+and+Labels
+# Passed from root module 
 variable "default_fieldeng_tags" {
   type = map(string)
-  default = {
-    "cost_center"    = "mixed"
-    "owner"          = "field@circleci.com"
-    "team"           = "Field Engineering"
-    "iac"            = "true"
-    "opt_in"         = "true"
-    "critical_until" = "critical-until-2024-07-31"
-    "purpose"        = "CERA is a customer facing demo architecture used by Solutions Engineering team."
-  }
 }
 
 # attached ass trust on EKS role for admin access

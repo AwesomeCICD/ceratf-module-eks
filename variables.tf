@@ -75,6 +75,10 @@ variable "cluster_endpoint_public_access" {
 
 }
 
+variable "storage_az_letter" {
+  type    = string
+  default = "b"
+}
 variable "cluster_endpoint_private_access" {
   type        = bool
   description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled"

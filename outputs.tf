@@ -34,7 +34,7 @@ output "kubeconfig_update_command" {
   value       = <<EOF
   To update your kubeconfig file, sign in to AWS SSO via CLI and then run the following commands:
 
-      aws eks update-kubeconfig --name ${local.derived_cluster_name} --region ${data.aws_region.current.name} --profile pipeline
+      aws eks update-kubeconfig --name ${local.derived_cluster_name} --region ${data.aws_region.current.name} 
       kubectl config rename-context ${module.eks.cluster_arn} ${local.derived_cluster_name}
       kubectl config set-context ${local.derived_cluster_name}
   

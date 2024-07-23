@@ -111,7 +111,7 @@ module "eks" {
   access_entries = {
 
     pipeline_access = {
-      pipeline_arn = var.pipeline_arn
+      principal_arn = var.pipeline_arn
       policy_associations = {
         admin_policy = {
           ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html

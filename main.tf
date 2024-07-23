@@ -156,29 +156,3 @@ resource "random_string" "suffix" {
   special = false
 }
 
-
-resource "kubernetes_storage_class" "expandable" {
-  metadata {
-    name = "expandable-gp2"
-    annotations = {
-      "storageclass.kubernetes.io/is-default-class" = "true"
-    }
-  }
-  storage_provisioner = "kubernetes.io/aws-ebs"
-
-  reclaim_policy = "Retain"
-  allowed_topologies {
-    match_label_expressions {
-      key = "failure-domain.beta.kubernetes.io/zone"
-      values = [
-        "${data.aws_region.current.name}b"
-      ]
-    }
-  }
-  volume_binding_mode    = "WaitForFirstConsumer"
-  allow_volume_expansion = "true"
-  parameters = {
-    type = "gp2"
-  }
-  depends_on = [module.eks]
-}

@@ -110,6 +110,26 @@ module "eks" {
 
   access_entries = {
 
+    pipeline_access = {
+      pipeline_arn = var.pipeline_arn
+      policy_associations = {
+        admin_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+        namespace_policy = {
+          ### https://docs.aws.amazon.com/eks/latest/userguide/access-policies.html
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+          access_scope = {
+            type       = "namespace"
+            namespaces = ["default", "kube-system", "*"]
+          }
+        }
+      }
+    }
     fieldeng_eks_access = {
       principal_arn = var.principal_arn
       policy_associations = {

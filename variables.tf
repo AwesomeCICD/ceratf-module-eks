@@ -99,3 +99,8 @@ variable "principal_arn" {
   type        = string
   description = "WHat role will be allowed cluster admin access via kubectl?"
 }
+# attached ass trust on EKS role for admin access
+variable "pipeline_arn" {
+  type        = string
+  description = "WHat role will pipeline use access via kubectl?"
+}
